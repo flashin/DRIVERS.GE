@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <style name="appTheme">
+        <item name="android:windowTitleSize">25sp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/titleBarBackground</item>
+    </style>
+    
+    <style name="titleBarBackground">
+        <item name="android:background">@raw/header_border</item>
+    </style>
+</resources>
