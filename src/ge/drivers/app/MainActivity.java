@@ -14,9 +14,9 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        
         try {
+            requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+            
             setContentView(R.layout.main);
 
             getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
