@@ -47,7 +47,7 @@ public class MyAlert {
         AlertDialog alertDialog = alertDialogBuilder.create();
 	alertDialog.show();
         
-        //Customize text layout of the dialog (Changing font size)
+        //Customize text layout of the dialog
         TextView textview = (TextView)alertDialog.findViewById(android.R.id.message);
         textview.setTextSize(13);
     }
