@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ge.drivers.modules;
+package ge.drivers.lib;
 
 import android.app.AlertDialog;
 import android.content.Context;

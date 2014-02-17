@@ -3,9 +3,11 @@
       package="ge.drivers.app"
       android:versionCode="1"
       android:versionName="1.0">
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application android:label="@string/app_name"
                 android:icon="@raw/small_logo"
-                android:theme="@style/appTheme">
+                android:theme="@style/appTheme"
+                android:debuggable="true">
         <activity android:name="MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
