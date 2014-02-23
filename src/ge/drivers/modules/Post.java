@@ -4,7 +4,6 @@
  */
 package ge.drivers.modules;
 
-import android.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,8 +89,9 @@ public class Post {
         }
         //add videos
         if (this.videos != null){
+            int viewWidth = context.getResources().getDisplayMetrics().widthPixels;
             for (int i = 0; i < videos.length; i++){
-                playout.addView(this.videos[i].getView(context));
+                playout.addView(this.videos[i].getView(context, viewWidth));
             }
         }
 

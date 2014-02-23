@@ -35,8 +35,8 @@ public class Posts {
                 JSONArray jarr = obj.getJSONArray("data");
                 int size = jarr.length();
 
-                this.posts = new Post[size];
-                for (int i = 0; i < size; i++) {
+                this.posts = new Post[1];
+                for (int i = 0; i < 1; i++) {
                     this.posts[i] = new Post(jarr.getJSONObject(i));
                 }
             }
