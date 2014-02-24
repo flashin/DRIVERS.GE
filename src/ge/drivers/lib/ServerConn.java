@@ -29,6 +29,7 @@ public class ServerConn {
     public static String api = "API/";
     public static String img = "media/imgs/";
     public static String video = "media/videos/";
+    public static String screen = "media/post_screens/";
 
     //Gets Json Object from url
     public static JSONObject getJson(String module) {

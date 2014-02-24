@@ -30,4 +30,13 @@ public class MyResource {
         int res = R.getIdentifier(id, "layout", context.getPackageName());
         return res;
     }
+    
+    /**
+     * static method to get drawable resource by its name
+     */
+    public static int getDrawable(Context context, String id){
+        Resources R = context.getResources();
+        int res = R.getIdentifier(id, "drawable", context.getPackageName());
+        return res;
+    }
 }

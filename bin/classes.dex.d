@@ -16,5 +16,6 @@ D:\Java\DriversGe\bin\classes\ge\drivers\lib\ServerConn.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Image.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Post.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Posts.class \
+D:\Java\DriversGe\bin\classes\ge\drivers\modules\Video$1.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Video.class \
 D:\Java\DriversGe\bin\dexedLibs\annotations-62bab95d6948a2db17bbc7976160b014.jar \
