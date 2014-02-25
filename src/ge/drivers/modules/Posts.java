@@ -8,7 +8,11 @@ import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.ServerConn;
 
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,13 +20,16 @@ import org.json.JSONObject;
  *
  * @author alexx
  */
-public class Posts {
+public class Posts extends ArrayAdapter<Post> {
 
-    private Post[] posts;
+    private ArrayList<Post> posts;
+    private Context context;
 
-    public Posts() {
+    public Posts(Context context, int res) {
 
-        this.posts = null;
+        super(context, res);
+        this.posts = new ArrayList<Post>();
+        this.context = context;
     }
 
     //load posts from server
@@ -35,9 +42,11 @@ public class Posts {
                 JSONArray jarr = obj.getJSONArray("data");
                 int size = jarr.length();
 
-                this.posts = new Post[size];
+                Post tmp = null;
                 for (int i = 0; i < size; i++) {
-                    this.posts[i] = new Post(jarr.getJSONObject(i));
+                    tmp = new Post(jarr.getJSONObject(i));
+                    this.posts.add(tmp);
+                    this.add(tmp);
                 }
             }
         } catch (Exception e) {
@@ -45,13 +54,10 @@ public class Posts {
         }
     }
 
-    //draw posts
-    public void drawPosts(Context context, LinearLayout lout) {
-
-        if (posts != null) {
-            for (int i = 0; i < this.posts.length; i++) {
-                lout.addView(posts[i].getView(context));
-            }
-        }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent){
+        
+        View v = posts.get(position).getView(context);
+        return v;
     }
 }

@@ -1,5 +1,6 @@
 D:\Java\DriversGe\bin\classes.dex : \
 D:\Java\DriversGe\bin\classes\ge\drivers\app\BuildConfig.class \
+D:\Java\DriversGe\bin\classes\ge\drivers\app\MainActivity$1.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\app\MainActivity.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\app\R$attr.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\app\R$drawable.class \
