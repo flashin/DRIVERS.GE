@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class MainActivity extends Activity
 {
@@ -29,6 +30,9 @@ public class MainActivity extends Activity
             
             LinearLayout lout = (LinearLayout)findViewById(R.id.posts_area);
             posts.drawPosts(this, lout);
+            
+            ScrollView sv = (ScrollView)findViewById(R.id.scroll_area);
+            sv.onGenericMotionEvent(null);
         }
         catch (Exception e){
             //alert exception

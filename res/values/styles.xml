@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <style name="appTheme">
-        <item name="android:windowTitleSize">30sp</item>
+        <item name="android:windowTitleSize">40sp</item>
         <item name="android:windowTitleBackgroundStyle">@style/titleBarBackground</item>
     </style>
     
     <style name="titleBarBackground">
         <item name="android:background">#F1F0F6</item>
+    </style>
+    
+    <style name="titleTxt">
+        <item name="android:textColor">#888888</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:paddingBottom">4sp</item>
+    </style>
+    
+    <style name="commentTxt">
+        <item name="android:textColor">#888888</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">4sp</item>
+        <item name="android:paddingBottom">2sp</item>
+        <item name="android:paddingLeft">2sp</item>
+    </style>
+    
+    <style name="likeTxt">
+        <item name="android:textColor">#1188D4</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">4sp</item>
+        <item name="android:paddingBottom">6sp</item>
+        <item name="android:paddingLeft">4sp</item>
+        <item name="android:paddingRight">4sp</item>
     </style>
 </resources>

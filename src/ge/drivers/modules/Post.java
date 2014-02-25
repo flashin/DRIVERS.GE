@@ -5,9 +5,11 @@
 package ge.drivers.modules;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
 
@@ -77,24 +79,55 @@ public class Post {
     //get post view
     public View getView(Context context) {
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        try {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        LinearLayout playout = (LinearLayout) inflater.inflate(MyResource.getLayout(context, "post"), null);
+            LinearLayout playout = (LinearLayout) inflater.inflate(MyResource.getLayout(context, "post"), null);
 
-        //add images
-        if (this.imgs != null) {
-            for (int i = 0; i < imgs.length; i++) {
-                playout.addView(this.imgs[i].getView(context));
+            TextView postTitle = (TextView)playout.getChildAt(0);
+            postTitle.setText(post.getString("make_name") + " " + post.getString("model_name") + " / " + post.getString("plate_number"));
+            
+            TextView postComment = (TextView)playout.getChildAt(1);
+            postComment.setText(post.getString("open_comment"));
+            
+            LinearLayout itemsCont = (LinearLayout)playout.getChildAt(2);
+            
+            LinearLayout bottomBar = (LinearLayout)playout.getChildAt(3);
+            TextView postAuthor = (TextView)bottomBar.getChildAt(0);
+            postAuthor.setText("ავტორი: " + post.getString("user_name"));
+            TextView postDate = (TextView)bottomBar.getChildAt(1);
+            postDate.setText("თარიღი: " + post.getString("create_date"));
+            
+            LinearLayout likeBar = (LinearLayout)playout.getChildAt(4);
+            TextView postUnlike = (TextView)likeBar.getChildAt(0);
+            postUnlike.setText("ვერჩი (" + post.getString("unlike_count") + ")");
+            TextView postLike = (TextView)likeBar.getChildAt(1);
+            postLike.setText("რას ვერჩი (" + post.getString("like_count") + ")");
+            if (post.getString("like_value").compareTo("0") == 0){
+                postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
             }
-        }
-        //add videos
-        if (this.videos != null){
-            int viewWidth = context.getResources().getDisplayMetrics().widthPixels;
-            for (int i = 0; i < videos.length; i++){
-                playout.addView(this.videos[i].getView(context, viewWidth));
+            else if (post.getString("like_value").compareTo("1") == 0){
+                postLike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
             }
-        }
 
-        return playout;
+            //add images
+            if (this.imgs != null) {
+                for (int i = 0; i < imgs.length; i++) {
+                    itemsCont.addView(this.imgs[i].getView(context));
+                }
+            }
+            //add videos
+            if (this.videos != null){
+                int viewWidth = context.getResources().getDisplayMetrics().widthPixels;
+                for (int i = 0; i < videos.length; i++){
+                    itemsCont.addView(this.videos[i].getView(context, viewWidth));
+                }
+            }
+
+            return playout;
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }
