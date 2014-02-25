@@ -33,10 +33,10 @@ public class Posts {
         try {
             if (obj.getString("success").compareTo("true") == 0) {
                 JSONArray jarr = obj.getJSONArray("data");
-                int size = jarr.length();
+                int size = jarr.length();size=2;
 
-                this.posts = new Post[1];
-                for (int i = 0; i < 1; i++) {
+                this.posts = new Post[size];
+                for (int i = 0; i < size; i++) {
                     this.posts[i] = new Post(jarr.getJSONObject(i));
                 }
             }

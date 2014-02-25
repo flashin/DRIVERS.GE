@@ -4,16 +4,19 @@
  */
 package ge.drivers.modules;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -38,6 +41,8 @@ public class Video {
     private JSONObject video;
     private String folder;
     private Context cont = null;
+    private ProgressDialog progDailog = null;
+    private VideoView VID = null;
 
     public Video(JSONObject obj, String createDate) {
 
@@ -51,6 +56,9 @@ public class Video {
         try {
             int height = (width / 16) * 9;
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
+            LinearLayout.LayoutParams fp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            LinearLayout container = new LinearLayout(context);
+            container.setLayoutParams(lp);
 
             ImageView IMG = new ImageView(context);
             String screenUrl = ServerConn.url + ServerConn.screen + this.folder + this.video.getString("video_thumbnail");
@@ -59,15 +67,10 @@ public class Video {
             layers[1] = context.getResources().getDrawable(MyResource.getDrawable(context, "play_button"));
 
             LayerDrawable ld = new LayerDrawable(layers);
-            int imageHeight = lp.height;
-            int imageWidth = lp.width;
-            int overlayHeight = layers[1].getIntrinsicHeight();
-            int overlayWidth = layers[1].getIntrinsicWidth();
-            int lR = (imageWidth - overlayWidth) / 2;
-            int top = imageHeight - (overlayHeight + 10);
-            int bottom = 10;
-            ld.setLayerInset(1, lR, top, lR, bottom);
-            IMG.setLayoutParams(lp);
+            int lR = (width - height / 2) / 2;
+            int tB = (height - height / 2) / 2;
+            ld.setLayerInset(1, lR, tB, lR, tB);
+            IMG.setLayoutParams(fp);
             IMG.setImageDrawable(ld);
 
             cont = context;
@@ -78,11 +81,30 @@ public class Video {
                         String videoUrl = ServerConn.url + ServerConn.video + folder + video.getString("video_url") + ".mp4";
                         
                         MediaController mediaController = new MediaController(cont);
-                        VideoView VID = new VideoView(cont);
-                        VID.setLayoutParams(new ViewGroup.LayoutParams(v.getWidth(), v.getHeight()));
+                        VID = new VideoView(cont);
+                        VID.setLayoutParams(new ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
                         VID.setMediaController(mediaController);
                         VID.setVideoPath(videoUrl);
-                        VID.start();
+                        VID.requestFocus();
+                        
+                        mediaController.show();                        
+                        progDailog = ProgressDialog.show(VID.getContext(), null, "Please Wait...", true);
+                        VID.setOnPreparedListener(new OnPreparedListener() {
+
+                            public void onPrepared(MediaPlayer mp) {
+                                // TODO Auto-generated method stub
+                            	progDailog.dismiss();
+                            	VID.start();
+                            }
+                        });
+                        VID.setOnErrorListener(new OnErrorListener() {
+
+                            public boolean onError(MediaPlayer mp, int what, int extra) {
+                                // TODO Auto-generated method stub
+                            	progDailog.dismiss();
+                            	return false;
+                            }
+                        });
                         
                         ViewGroup vg = (ViewGroup)v.getParent();
                         vg.removeView(v);
@@ -93,20 +115,9 @@ public class Video {
                 }
             };
             IMG.setOnClickListener(clickListener);
+            container.addView(IMG);
 
-            return IMG;
-            /*
-             * MediaController mediaController = new MediaController(context);
-             *
-             * String videoUrl = ServerConn.url + ServerConn.video + this.folder
-             * + this.video.getString("video_url") + ".mp4"; VideoView VID = new
-             * VideoView(context); VID.setLayoutParams(new
-             * ViewGroup.LayoutParams(width, (width / 16) * 9));
-             * VID.setMediaController(mediaController);
-             * VID.setVideoPath(videoUrl);
-             *
-             * return VID;
-             */
+            return container;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
