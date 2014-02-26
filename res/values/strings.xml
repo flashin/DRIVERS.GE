@@ -6,4 +6,8 @@
     <string name="post_date">თარიღი</string>
     <string name="post_unlike">ვერჩი</string>
     <string name="post_like">რას ვერჩი</string>
+    <string name="menu_videos">ვიდეო მასალა</string>
+    <string name="menu_photos">ფოტო მასალა</string>
+    <string name="menu_facebook">Facebook მომხმარებლით შესვლა</string>
+    <string name="menu_google">Google+ მომხმარებლით შესვლა</string>
 </resources>

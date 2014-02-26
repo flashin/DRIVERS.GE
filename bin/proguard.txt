@@ -1,0 +1,6 @@
+# view res/layout/main.xml #generated:2
+-keep class android.support.v4.widget.DrawerLayout { <init>(...); }
+
+# view AndroidManifest.xml #generated:12
+-keep class ge.drivers.app.MainActivity { <init>(...); }
+

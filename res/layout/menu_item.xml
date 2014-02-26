@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#454545"
+    >
+<TextView  
+    style="@style/menuItem"
+    android:id="@+id/menu_item"
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content"
+    android:minHeight="50sp"
+    android:gravity="center_vertical"
+    />
+</LinearLayout>
+
