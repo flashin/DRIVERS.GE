@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">DRIVERS.GE</string>
     <string name="app_slogan">გზების გმირები</string>
+    <string name="post_author">ავტორი</string>
+    <string name="post_date">თარიღი</string>
+    <string name="post_unlike">ვერჩი</string>
+    <string name="post_like">რას ვერჩი</string>
 </resources>

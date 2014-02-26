@@ -13,6 +13,7 @@ import android.widget.AbsListView.OnScrollListener;
 public class MainActivity extends ListActivity {
     
     private Posts posts;
+    private int page = 1;
 
     /**
      * Called when the activity is first created.
@@ -26,49 +27,22 @@ public class MainActivity extends ListActivity {
 
             //load posts in the layout
             posts = new Posts(this, R.layout.main);
-            posts.loadPosts();
+            posts.loadPosts(page++);
 
             setListAdapter(posts);
 
             getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
             ListView lv = this.getListView();
+            
             lv.setOnScrollListener(new OnScrollListener() {
 
                 @Override
                 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    boolean loading = true;
-                    int currentPage = 0;
-                    int startingPageIndex = 0;
-                    int previousTotalItemCount = 0;
-                    int visibleThreshold = 5;
                     
-                    // If the total item count is zero and the previous isn't, assume the
-                    // list is invalidated and should be reset back to initial state
-                    if (totalItemCount < previousTotalItemCount) {
-                        currentPage = startingPageIndex;
-                        previousTotalItemCount = totalItemCount;
-                        if (totalItemCount == 0) {
-                            loading = true;
-                        }
-                    }
-
-                    // If it’s still loading, we check to see if the dataset count has
-                    // changed, if so we conclude it has finished loading and update the current page
-                    // number and total item count.
-                    if (loading && (totalItemCount > previousTotalItemCount)) {
-                        loading = false;
-                        previousTotalItemCount = totalItemCount;
-                        currentPage++;
-                    }
-
-                    // If it isn’t currently loading, we check to see if we have breached
-                    // the visibleThreshold and need to reload more data.
-                    // If we do need to reload some more data, we execute onLoadMore to fetch the data.
-                    if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                        posts.loadPosts();
-                        loading = true;
-                    }
+                	if (posts.getAllowLoading() && firstVisibleItem + visibleItemCount >= totalItemCount){
+                		posts.loadPosts(page++);
+                	}
                 }
 
                 @Override

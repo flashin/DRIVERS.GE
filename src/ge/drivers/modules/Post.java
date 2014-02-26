@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import ge.drivers.lib.MyAlert;
@@ -16,7 +15,6 @@ import ge.drivers.lib.MyResource;
 
 import java.util.Iterator;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,8 +28,9 @@ public class Post {
     private JSONObject post;
     private Image[] imgs;
     private Video[] videos;
+    private View v = null;
 
-    public Post(JSONObject obj) {
+    public Post(JSONObject obj, Context context) {
 
         this.post = obj;
 
@@ -75,10 +74,16 @@ public class Post {
         } catch (JSONException e) {
             this.videos = null;
         }
+        
+        this.createView(context);
     }
 
-    //get post view
-    public View getView(Context context) {
+    //create view
+    public void createView(Context context) {
+    	
+    	if (v != null){
+    		return;
+    	}
 
         try {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -95,15 +100,15 @@ public class Post {
             
             LinearLayout bottomBar = (LinearLayout)playout.getChildAt(3);
             TextView postAuthor = (TextView)bottomBar.getChildAt(0);
-            postAuthor.setText("ავტორი: " + post.getString("user_name"));
+            postAuthor.setText(context.getString(MyResource.getString(context, "post_author")) + ": " + post.getString("user_name"));
             TextView postDate = (TextView)bottomBar.getChildAt(1);
-            postDate.setText("თარიღი: " + post.getString("create_date"));
+            postDate.setText(context.getString(MyResource.getString(context, "post_date")) + ": " + post.getString("create_date"));
             
             LinearLayout likeBar = (LinearLayout)playout.getChildAt(4);
             TextView postUnlike = (TextView)likeBar.getChildAt(0);
-            postUnlike.setText("ვერჩი (" + post.getString("unlike_count") + ")");
+            postUnlike.setText(context.getString(MyResource.getString(context, "post_unlike")) + " (" + post.getString("unlike_count") + ")");
             TextView postLike = (TextView)likeBar.getChildAt(1);
-            postLike.setText("რას ვერჩი (" + post.getString("like_count") + ")");
+            postLike.setText(context.getString(MyResource.getString(context, "post_like")) + " (" + post.getString("like_count") + ")");
             if (post.getString("like_value").compareTo("0") == 0){
                 postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
             }
@@ -125,10 +130,16 @@ public class Post {
                 }
             }
 
-            return playout;
+            this.v = playout;
         }
         catch (Exception e){
             throw new RuntimeException(e);
         }
+    }
+    
+    //get post view
+    public View getView() {
+    	
+    	return v;
     }
 }

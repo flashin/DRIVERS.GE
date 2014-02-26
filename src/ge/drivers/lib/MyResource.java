@@ -39,4 +39,13 @@ public class MyResource {
         int res = R.getIdentifier(id, "drawable", context.getPackageName());
         return res;
     }
+    
+    /**
+     * static method to get string resource by its name
+     */
+    public static int getString(Context context, String id){
+        Resources R = context.getResources();
+        int res = R.getIdentifier(id, "string", context.getPackageName());
+        return res;
+    }
 }
