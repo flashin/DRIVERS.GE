@@ -10,10 +10,13 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import ge.drivers.app.R;
+import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
 
 /**
@@ -41,6 +44,7 @@ public class Menu {
         }
 
         mDrawerList.setAdapter(new MenuAdapter(res));
+        mDrawerList.setOnItemClickListener(this.getClickListener());
     }
 
     private class MenuAdapter extends ArrayAdapter<String> {
@@ -61,5 +65,21 @@ public class Menu {
 
             return rowView;
         }
+    }
+    
+    /**
+     * Click event of the menu item
+     */
+    public AdapterView.OnItemClickListener getClickListener(){
+        AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+            /**
+             * Opens Pop up window with law description
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MyAlert.alertWin(context, position + "");
+            }
+        };
+        return clickListener;
     }
 }
