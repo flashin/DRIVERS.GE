@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#777777"
+              android:orientation="vertical" >
+    <EditText
+        android:id="@+id/keyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_margin="4px" 
+        android:hint="@string/search_keyword"
+        android:inputType="text" />
+    <Spinner android:id="@+id/make_id" 
+             android:layout_margin="4px"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content" />
+    <Spinner android:id="@+id/model_id" 
+             android:layout_margin="4px"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/plate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_margin="4px" 
+        android:hint="@string/post_plate"
+        android:inputType="text" />
+    <Spinner android:id="@+id/city_id" 
+             android:layout_margin="4px"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_margin="4px"
+        android:text="@string/search_submit"
+        android:onClick="submitSearch" />
+</LinearLayout>

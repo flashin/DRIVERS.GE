@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_id">577592772314235</string>
     <string name="app_name">DRIVERS.GE</string>
+    <string name="fb_login_title">DRIVERS.GE Facebook Login</string>
     <string name="app_slogan">გზების გმირები</string>
     <string name="post_author">ავტორი</string>
     <string name="post_date">თარიღი</string>
@@ -10,4 +12,16 @@
     <string name="menu_photos">ფოტო მასალა</string>
     <string name="menu_facebook">Facebook მომხმარებლით შესვლა</string>
     <string name="menu_google">Google+ მომხმარებლით შესვლა</string>
+    <string name="menu_upload">მასალის ატვირთვა</string>
+    <string name="menu_uploaded">ატვირთული მასალა</string>
+    <string name="menu_rated">შეფასებული მასალა</string>
+    <string name="menu_logout">გასვლა</string>
+    <string name="post_plate">მანქანის ნომერი</string>
+    <string name="upload_anonymous">ანონიმური ატვირთვა</string>
+    <string name="post_description">აღწერა</string>
+    <string name="post_make">მარკა</string>
+    <string name="post_model">მოდელი</string>
+    <string name="post_city">ქალაქი</string>
+    <string name="search_keyword">საძიებო ტექსტი</string>
+    <string name="search_submit">ძიება</string>
 </resources>

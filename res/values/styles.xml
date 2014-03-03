@@ -6,7 +6,7 @@
     </style>
     
     <style name="titleBarBackground">
-        <item name="android:background">#F1F0F6</item>
+        <item name="android:background">#434343</item>
     </style>
     
     <style name="titleTxt">

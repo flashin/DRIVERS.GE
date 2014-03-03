@@ -1,18 +1,19 @@
 package ge.drivers.app;
 
-import ge.drivers.lib.MyAlert;
-import ge.drivers.modules.Menu;
-import ge.drivers.modules.Posts;
-
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.ListView;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
-public class MainActivity extends Activity {
-    
+import ge.drivers.auth.Auth;
+import ge.drivers.lib.MyAlert;
+import ge.drivers.modules.Menu;
+import ge.drivers.modules.Posts;
+
+public class MainActivity extends CommonActivity {
+
     private Posts posts;
     private int page = 1;
 
@@ -27,25 +28,33 @@ public class MainActivity extends Activity {
             requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             setContentView(R.layout.main);
             getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+
+            //Authentification
+            Auth.getInstance().startAuth(this, savedInstanceState);
+
             ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
-            Menu menu = new Menu(mDrawerList, R.layout.menu_item);
-            
+            menu = new Menu(mDrawerList, R.layout.menu_item);
+            //Add Search Menu
+            menu.inflateSearch();
+
             ListView lv = (ListView) findViewById(R.id.list);
+            
+            Intent intent = getIntent();
 
             //load posts in the layout
-            posts = new Posts(this, R.layout.post);
+            posts = new Posts(this, R.layout.post, intent);
             posts.loadPosts(page++);
 
             lv.setAdapter(posts);
-            
+
             lv.setOnScrollListener(new OnScrollListener() {
 
                 @Override
                 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    
-                	if (posts.getAllowLoading() && firstVisibleItem + visibleItemCount >= totalItemCount){
-                		posts.loadPosts(page++);
-                	}
+
+                    if (posts.getAllowLoading() && firstVisibleItem + visibleItemCount >= totalItemCount) {
+                        posts.loadPosts(page++);
+                    }
                 }
 
                 @Override

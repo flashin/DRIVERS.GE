@@ -20,4 +20,14 @@
               android:divider="@drawable/divider"
               android:dividerHeight="1dp"
               android:background="#111" />
+    <!-- Right drawer -->
+    <LinearLayout
+        android:id="@+id/right_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:choiceMode="singleChoice"
+        android:background="#111"
+        android:orientation="vertical" >
+    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
