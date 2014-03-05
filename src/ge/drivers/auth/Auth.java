@@ -42,6 +42,10 @@ public class Auth {
     public void resultAuth(int requestCode, int resultCode, Intent data) {
 
         AuthFB.getInstance().activityResultCallback(requestCode, resultCode, data);
+        
+        if (resultCode == 1021){
+            AuthGoogle.getInstance().googleClickCallback();
+        }
     }
 
     public void saveInstanceStateAuth(Bundle outState) {
