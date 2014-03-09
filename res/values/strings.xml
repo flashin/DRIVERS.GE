@@ -35,4 +35,9 @@
     <string name="upload_completed">თქვენი პოსტი განთავსებულია</string>
     <string name="upload_incomplete">თქვენი პოსტი განთავსებულია</string>
     <string name="upload_submit">მასალის გამოქვეყნება</string>
+    <string name="report_title">შეატყობინე ადმინისტრატორს</string>
+    <string name="report_hint">რატომ არეპორტებთ მოცემულ მასალას?</string>
+    <string name="report_result">თქვენი შეტყობინება გაიგზავნა საიტის ადმინისტრატორთან</string>
+    <string name="report_send">გაგზავნა</string>
+    <string name="loading_mess">გთხოვთ დაელოდოთ...</string>
 </resources>

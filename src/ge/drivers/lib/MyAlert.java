@@ -5,6 +5,7 @@
 package ge.drivers.lib;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.TextView;
@@ -44,5 +45,12 @@ public class MyAlert {
         
         AlertDialog alertDialog = alertDialogBuilder.create();
 	alertDialog.show();
+    }
+    
+    public static ProgressDialog getStandardProgress(Context context){
+    
+        String wait_mess = context.getString(MyResource.getString(context, "loading_mess"));
+        ProgressDialog progDailog = ProgressDialog.show(context, null, wait_mess, true);
+        return progDailog;
     }
 }

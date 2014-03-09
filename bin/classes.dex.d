@@ -54,6 +54,9 @@ D:\Java\DriversGe\bin\classes\ge\drivers\modules\Image.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Menu$1.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Menu$MenuAdapter.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Menu.class \
+D:\Java\DriversGe\bin\classes\ge\drivers\modules\Post$1$1.class \
+D:\Java\DriversGe\bin\classes\ge\drivers\modules\Post$1.class \
+D:\Java\DriversGe\bin\classes\ge\drivers\modules\Post$ReportPostTask.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Post.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Posts$1.class \
 D:\Java\DriversGe\bin\classes\ge\drivers\modules\Posts$PostsLoader.class \
