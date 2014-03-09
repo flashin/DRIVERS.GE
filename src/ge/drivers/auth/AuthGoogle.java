@@ -100,7 +100,7 @@ public class AuthGoogle {
             p.put("token", token);
             p.put("service", "GoogleService");
 
-            JSONObject driversRes = ServerConn.postJson("login", p);
+            JSONObject driversRes = ServerConn.postJsonSimple("login", p);
 
             if (driversRes.getString("success").equals("true")) {
                 //TODO Login successfull Start your next activity

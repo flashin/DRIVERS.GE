@@ -5,19 +5,24 @@
 package ge.drivers.app;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
 import ge.drivers.auth.Auth;
-import ge.drivers.lib.DynamicSpinner;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.modules.Menu;
+import ge.drivers.modules.Upload;
 
 /**
  *
  * @author alexx
  */
 public class UploadActivity extends CommonActivity {
+    
+    private Upload upload;
 
     /**
      * Called when the activity is first created.
@@ -30,7 +35,7 @@ public class UploadActivity extends CommonActivity {
         try {
             requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             setContentView(R.layout.upload);
-            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar_2);
 
             //Authentification
             Auth.getInstance().startAuth(this, icicle);
@@ -38,10 +43,25 @@ public class UploadActivity extends CommonActivity {
             ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
             Menu menu = new Menu(mDrawerList, R.layout.menu_item);
             
-            DynamicSpinner carMake = new DynamicSpinner(this, "make_id", "makes", "post_make");
-            DynamicSpinner postCity = new DynamicSpinner(this, "city_id", "cities", "post_city");
+            ListView uploadList = (ListView) findViewById(R.id.upload_list);
+            upload = new Upload(uploadList, R.layout.upload_item);
         } catch (Exception e) {
             MyAlert.alertWin(this, "" + e);
         }
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == 1022){
+            String path = upload.getPath(data.getData());
+            upload.uploadFile(path);
+        }
+    }
+    
+    public void createNewPost(View view){
+    
+        upload.createNewPost();
     }
 }

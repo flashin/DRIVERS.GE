@@ -31,4 +31,18 @@ public class MyAlert {
         AlertDialog alertDialog = alertDialogBuilder.create();
 	alertDialog.show();
     }
+    
+    public static void alertSuccessWin(Context context, String title, String str){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage(str);
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){  
+                    public void onClick(DialogInterface dialog, int id) {  
+                        dialog.dismiss(); 
+                    }  
+                });
+        
+        AlertDialog alertDialog = alertDialogBuilder.create();
+	alertDialog.show();
+    }
 }

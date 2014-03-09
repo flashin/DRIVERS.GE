@@ -7,6 +7,7 @@ package ge.drivers.auth;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import ge.drivers.lib.MyAlert;
 
 import ge.drivers.lib.ServerConn;
 
@@ -100,5 +101,10 @@ public class Auth {
         }
 
         return AuthFB.getInstance().getEmail();
+    }
+    
+    public boolean isBlocked(){
+    
+        return AuthFB.getInstance().isBlocked();
     }
 }

@@ -62,6 +62,19 @@
             android:hint="@string/post_description"
             android:gravity="top"
             android:inputType="text" />
+        <ListView
+            android:id="@+id/upload_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#434343"
+            android:fastScrollEnabled="true" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12px"
+            android:layout_marginBottom="10px"
+            android:text="@string/upload_submit"
+            android:onClick="createNewPost" />
     </LinearLayout>
     <!-- The navigation drawer -->
     <ListView android:id="@+id/left_drawer"
@@ -72,14 +85,4 @@
               android:divider="@drawable/divider"
               android:dividerHeight="1dp"
               android:background="#111" />
-    <!-- Right drawer -->
-    <LinearLayout
-        android:id="@+id/right_drawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:choiceMode="singleChoice"
-        android:background="#111"
-        android:orientation="vertical" >
-    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

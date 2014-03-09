@@ -388,6 +388,7 @@ D:\Java\facebook-android-sdk-3.7\facebook\bin\res\drawable-xhdpi\com_facebook_cl
 D:\Java\facebook-android-sdk-3.7\facebook\bin\res\drawable-xhdpi\com_facebook_inverse_icon.png \
 D:\Java\facebook-android-sdk-3.7\facebook\bin\res\drawable-xhdpi\com_facebook_logo.png \
 D:\Java\facebook-android-sdk-3.7\facebook\bin\res\drawable-xhdpi\com_facebook_picker_magnifier.png \
+D:\Java\DriversGe\res\drawable\delete_uploaded.png \
 D:\Java\DriversGe\res\drawable\divider.xml \
 D:\Java\DriversGe\res\drawable\menu_button.png \
 D:\Java\DriversGe\res\drawable\play_button.png \
@@ -398,11 +399,14 @@ D:\Java\DriversGe\res\layout\menu_item.xml \
 D:\Java\DriversGe\res\layout\post.xml \
 D:\Java\DriversGe\res\layout\search.xml \
 D:\Java\DriversGe\res\layout\title_bar.xml \
+D:\Java\DriversGe\res\layout\title_bar_2.xml \
 D:\Java\DriversGe\res\layout\upload.xml \
+D:\Java\DriversGe\res\layout\upload_item.xml \
 D:\Java\DriversGe\res\raw\header_border.png \
 D:\Java\DriversGe\res\raw\small_logo.png \
 D:\Java\DriversGe\res\values\strings.xml \
 D:\Java\DriversGe\res\values\styles.xml \
+D:\Java\DriversGe\bin\res\drawable\delete_uploaded.png \
 D:\Java\DriversGe\bin\res\drawable\menu_button.png \
 D:\Java\DriversGe\bin\res\drawable\play_button.png \
 D:\Java\DriversGe\bin\res\drawable\search_button.png \

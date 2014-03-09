@@ -31,7 +31,20 @@ public class MainActivity extends CommonActivity {
 
             //Authentification
             Auth.getInstance().startAuth(this, savedInstanceState);
-
+            init_wall();
+        } catch (Exception e) {
+            //alert exception
+            MyAlert.alertWin(this, "" + e);
+        }
+    }
+    
+    public void init_wall(){
+    
+        try {
+            if (Auth.getInstance().isBlocked()){
+                return;
+            }
+            
             ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
             menu = new Menu(mDrawerList, R.layout.menu_item);
             //Add Search Menu

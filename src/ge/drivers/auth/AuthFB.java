@@ -42,6 +42,7 @@ public class AuthFB {
     private String sessionId = null;
     private String email = null;
     private String token = null;
+    private boolean block_load = false;
 
     private AuthFB() {
         activity = null;
@@ -61,6 +62,7 @@ public class AuthFB {
         this.activity = activity;
         permissions = new ArrayList<String>();
         permissions.add("email");
+        block_load = false;
 
         Session session = Session.getActiveSession();
         if (session == null) {
@@ -141,6 +143,7 @@ public class AuthFB {
                 dialog = new ProgressDialog(activity);
                 dialog.setMessage("Loggin in..");
                 dialog.show();
+                block_load = true;
                 Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
                     @Override
@@ -167,7 +170,7 @@ public class AuthFB {
                                     Map<String, Object> p = new HashMap<String, Object>();
                                     p.put("token", token);
                                     p.put("service", "FacebookService");
-                                    JSONObject driversRes = ServerConn.postJson("login", p);
+                                    JSONObject driversRes = ServerConn.postJsonSimple("login", p);
                                     
                                     if (driversRes.getString("success").equals("true")) {
                                         //TODO Login successfull Start your next activity
@@ -193,7 +196,7 @@ public class AuthFB {
                                 Map<String, Object> p = new HashMap<String, Object>();
                                 p.put("token", token);
                                 p.put("service", "FacebookService");
-                                JSONObject driversRes = ServerConn.postJson("login", p);
+                                JSONObject driversRes = ServerConn.postJsonSimple("login", p);
 
                                 if (driversRes.getString("success").equals("true")) {
                                     //TODO Login successfull Start your next activity
@@ -211,6 +214,8 @@ public class AuthFB {
                         } catch (Exception e) {
                             MyAlert.alertWin(activity, "" + e);
                         }
+                        
+                    block_load = false;
                     }
                 });
             } else {
@@ -241,5 +246,10 @@ public class AuthFB {
             return true;
         }
         return false;
+    }
+
+    public boolean isBlocked() {
+
+        return block_load;
     }
 }

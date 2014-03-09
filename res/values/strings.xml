@@ -24,4 +24,15 @@
     <string name="post_city">ქალაქი</string>
     <string name="search_keyword">საძიებო ტექსტი</string>
     <string name="search_submit">ძიება</string>
+    <string name="upload_add_item">მასალის დამატება</string>
+    <string name="uploading_message">მიმდინარეობს ფაილის ატვირთვა...</string>
+    <string name="dialog_yes">დიახ</string>
+    <string name="dialog_no">არა</string>
+    <string name="delete_uploaded_title">წაშლა</string>
+    <string name="delete_uploaded_question">დარწმუნებული ხართ რომ გსურთ ატვირთული ფაილის წაშლა?</string>
+    <string name="delete_uploaded_answer">ფაილი წაშლილია</string>
+    <string name="upload_post_title">მასალის განთავსება</string>
+    <string name="upload_completed">თქვენი პოსტი განთავსებულია</string>
+    <string name="upload_incomplete">თქვენი პოსტი განთავსებულია</string>
+    <string name="upload_submit">მასალის გამოქვეყნება</string>
 </resources>
