@@ -267,6 +267,8 @@ int string common_google_play_services_update_text 0x7f070008
 int string common_google_play_services_update_title 0x7f070007
 int string common_signin_button_text 0x7f070012
 int string common_signin_button_text_long 0x7f070013
+int string delete_post_question 0x7f07005c
+int string delete_post_title 0x7f07005b
 int string delete_uploaded_answer 0x7f070051
 int string delete_uploaded_question 0x7f070050
 int string delete_uploaded_title 0x7f07004f
@@ -291,6 +293,7 @@ int string post_make 0x7f070046
 int string post_model 0x7f070047
 int string post_plate 0x7f070043
 int string post_unlike 0x7f070039
+int string rate_post_error 0x7f07005d
 int string report_hint 0x7f070057
 int string report_result 0x7f070058
 int string report_send 0x7f070059
@@ -308,6 +311,7 @@ int style appTheme 0x7f0a0002
 int style com_facebook_loginview_default_style 0x7f0a0000
 int style com_facebook_loginview_silver_style 0x7f0a0001
 int style commentTxt 0x7f0a0005
+int style full_screen_dialog 0x7f0a0008
 int style likeTxt 0x7f0a0006
 int style menuItem 0x7f0a0007
 int style titleBarBackground 0x7f0a0003

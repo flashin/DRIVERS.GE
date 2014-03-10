@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import ge.drivers.auth.Auth;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
 import ge.drivers.lib.ServerConn;
@@ -41,6 +42,8 @@ public class Post {
     private Image[] imgs;
     private Video[] videos;
     private View v = null;
+    private TextView postUnlike = null;
+    private TextView postLike = null;
     private Context context;
 
     public Post(JSONObject obj, Context context) {
@@ -111,7 +114,12 @@ public class Post {
             postComment.setText(post.getString("open_comment"));
 
             LinearLayout actionIcon = (LinearLayout) ((LinearLayout) playout.getChildAt(1)).getChildAt(1);
-            actionIcon.addView(getReportIcon());
+            if (post.getString("is_owner").equals("1")){
+            	actionIcon.addView(getDeleteIcon());
+            }
+            else {
+            	actionIcon.addView(getReportIcon());
+            }
 
             LinearLayout itemsCont = (LinearLayout) playout.getChildAt(2);
 
@@ -122,14 +130,53 @@ public class Post {
             postDate.setText(context.getString(MyResource.getString(context, "post_date")) + ": " + post.getString("create_date"));
 
             LinearLayout likeBar = (LinearLayout) playout.getChildAt(4);
-            TextView postUnlike = (TextView) likeBar.getChildAt(0);
+            postUnlike = (TextView) likeBar.getChildAt(0);
+            postUnlike.setClickable(true);      
             postUnlike.setText(context.getString(MyResource.getString(context, "post_unlike")) + " (" + post.getString("unlike_count") + ")");
-            TextView postLike = (TextView) likeBar.getChildAt(1);
+            if (Auth.getInstance().isLogged() && post.getString("like_value").equals("null")){
+	            postUnlike.setOnClickListener(new OnClickListener(){
+	            	
+	            	@Override
+	            	public void onClick(View v){
+	            		String[] p = new String[1];
+	            		p[0] = "dislike/";
+	            		try {
+	            			p[0] = p[0] + post.getString("id");
+	            		}
+	            		catch (Exception e){
+	            			p[0] = p[0] + "0";
+	            		}
+	            		RatePostTask rt = new RatePostTask();
+	                    rt.execute(p);
+	            	}
+	            });
+            }
+            
+            postLike = (TextView) likeBar.getChildAt(1);
+            postLike.setClickable(true);
             postLike.setText(context.getString(MyResource.getString(context, "post_like")) + " (" + post.getString("like_count") + ")");
+            if (Auth.getInstance().isLogged() && post.getString("like_value").equals("null")){
+	            postLike.setOnClickListener(new OnClickListener(){
+	            	
+	            	@Override
+	            	public void onClick(View v){
+	            		String[] p = new String[1];
+	            		p[0] = "like/";
+	            		try {
+	            			p[0] = p[0] + post.getString("id");
+	            		}
+	            		catch (Exception e){
+	            			p[0] = p[0] + "0";
+	            		}
+	            		RatePostTask rt = new RatePostTask();
+	                    rt.execute(p);
+	            	}
+	            });
+            }
             if (post.getString("like_value").compareTo("0") == 0) {
                 postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
             } else if (post.getString("like_value").compareTo("1") == 0) {
-                postLike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
+                postLike.setTypeface(postLike.getTypeface(), Typeface.BOLD);
             }
 
             //add images
@@ -253,11 +300,173 @@ public class Post {
                     error = "Unknown Error. Try Again Later";
                     if (result.has("error")) {
                         error = result.getString("error");
-                        MyAlert.alertSuccessWin(context, modal_title, error);
                     }
+                    MyAlert.alertSuccessWin(context, modal_title, error);
                 }
             } catch (Exception e) {
                 MyAlert.alertWin(context, e.toString());
+            }
+        }
+    }
+    
+    //get delete post icon
+    public View getDeleteIcon() {
+
+        ImageView IMG = new ImageView(context);
+        Drawable dr = context.getResources().getDrawable(MyResource.getDrawable(context, "delete_post"));
+        IMG.setImageDrawable(dr);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(32, 32);
+        IMG.setLayoutParams(layoutParams);
+
+        IMG.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                dialog.setTitle(context.getString(MyResource.getString(context, "delete_post_title")));
+                dialog.setMessage(context.getString(MyResource.getString(context, "delete_post_question")));
+
+                String ok_but = context.getString(MyResource.getString(context, "dialog_yes"));
+                String no_but = context.getString(MyResource.getString(context, "dialog_no"));
+                dialog.setPositiveButton(ok_but, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+
+                        String[] pt = new String[1];
+                        try {
+                            pt[0] = post.getString("id");
+                        } catch (Exception e) {
+                            pt[0] = "0";
+                        }
+
+                        DeletePostTask dt = new DeletePostTask();
+                        dt.execute(pt);
+                    }
+                });
+                dialog.setNegativeButton(no_but, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
+        });
+
+        return IMG;
+    }
+    
+    private class DeletePostTask extends AsyncTask<String, Void, JSONObject> {
+
+        private String error = null;
+        ProgressDialog prog_dialog = null;
+        
+        public DeletePostTask(){
+        
+            prog_dialog = MyAlert.getStandardProgress(context);
+            prog_dialog.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... urls) {
+
+            try {
+                Map<String, Object> hm = new HashMap<String, Object>();
+                hm.put("id", urls[0]);
+
+                JSONObject obj = ServerConn.postJson("deletepost", hm);
+                return obj;
+            } catch (Exception e) {
+                error = e.toString();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+
+            String modal_title = context.getString(MyResource.getString(context, "report_title"));
+            prog_dialog.dismiss();
+            if (error != null) {
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            try {
+                if (result.has("success") && result.getString("success").equals("true")) {
+                    String success_mess = context.getString(MyResource.getString(context, "report_result"));
+                    MyAlert.alertSuccessWin(context, modal_title, success_mess);
+                } else {
+                    error = "Unknown Error. Try Again Later";
+                    if (result.has("error")) {
+                        error = result.getString("error");                        
+                    }
+                    MyAlert.alertSuccessWin(context, modal_title, error);
+                }
+            } catch (Exception e) {
+                MyAlert.alertWin(context, e.toString());
+            }
+        }
+    }
+    
+    private class RatePostTask extends AsyncTask<String, Void, JSONObject> {
+
+        private String error = null;
+        ProgressDialog prog_dialog = null;
+        
+        public RatePostTask(){
+        
+            prog_dialog = MyAlert.getStandardProgress(context);
+            prog_dialog.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... urls) {
+
+            try {
+                JSONObject obj = ServerConn.getJson(urls[0]);
+                return obj;
+            } catch (Exception e) {
+                error = e.toString();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+
+            prog_dialog.dismiss();
+            if (error != null) {
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            try {
+            	if (result.has("success") && result.getString("success").equals("true")){
+	            	postUnlike.setText(context.getString(MyResource.getString(context, "post_unlike")) + " (" + result.getString("unlikes") + ")");
+	            	postLike.setText(context.getString(MyResource.getString(context, "post_like")) + " (" + result.getString("likes") + ")");
+	            	
+	            	if (result.getString("action").equals("1")) {
+	            		postLike.setTypeface(postLike.getTypeface(), Typeface.BOLD);
+	                } else {
+	                	postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
+	                }
+            	}
+            	else {
+            		error = "Unknown Error. Try Again Later";
+            		if (result.has("error")) {
+                        error = result.getString("error");                        
+                    }
+                    MyAlert.alertSuccessWin(context, context.getString(MyResource.getString(context, "rate_post_error")), error);
+            	}
+            }
+            catch (Exception e){
+            	MyAlert.alertWin(context, e.toString());
             }
         }
     }

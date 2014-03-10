@@ -4,6 +4,7 @@
  */
 package ge.drivers.modules;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -78,6 +80,8 @@ public class Video {
 
                 public void onClick(View v) {
                     try {
+                    	progDailog = MyAlert.getStandardProgress(cont);
+                    	
                         String videoUrl = ServerConn.url + ServerConn.video + folder + video.getString("video_url") + ".mp4";
                         
                         MediaController mediaController = new MediaController(cont);
@@ -88,7 +92,7 @@ public class Video {
                         VID.requestFocus();
                         
                         mediaController.show();                        
-                        progDailog = ProgressDialog.show(VID.getContext(), null, "Please Wait...", true);
+                        
                         VID.setOnPreparedListener(new OnPreparedListener() {
 
                             public void onPrepared(MediaPlayer mp) {
@@ -106,9 +110,11 @@ public class Video {
                             }
                         });
                         
-                        ViewGroup vg = (ViewGroup)v.getParent();
-                        vg.removeView(v);
-                        vg.addView(VID);
+                        Dialog dialog = new Dialog(cont);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(VID);
+                        
+                        dialog.show();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

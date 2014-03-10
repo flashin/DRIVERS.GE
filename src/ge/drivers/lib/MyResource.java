@@ -48,4 +48,13 @@ public class MyResource {
         int res = R.getIdentifier(id, "string", context.getPackageName());
         return res;
     }
+    
+    /**
+     * static method to get style resource by its name
+     */
+    public static int getStyle(Context context, String id){
+        Resources R = context.getResources();
+        int res = R.getIdentifier(id, "style", context.getPackageName());
+        return res;
+    }
 }

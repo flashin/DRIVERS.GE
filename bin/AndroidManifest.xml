@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="ge.drivers.app"
-      android:versionCode="1"
-      android:versionName="1.0">
+          package="ge.drivers.app"
+          android:versionCode="1"
+          android:versionName="1.0">
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="3" />
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"></uses-permission>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"></uses-permission>
     <application android:label="@string/app_name"
-                android:icon="@raw/small_logo"
-                android:theme="@style/appTheme"
-                android:debuggable="true">
+                 android:icon="@raw/small_logo"
+                 android:theme="@style/appTheme"
+                 android:debuggable="true">
         <activity android:name="MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
@@ -16,5 +18,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="UploadActivity"
+                  android:label="@string/menu_upload">
+            <intent-filter>
+                <action android:name="android.intent.action.UPLOAD" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.facebook.LoginActivity"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                  android:label="@string/fb_login_title">
+        </activity>
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 </manifest> 
