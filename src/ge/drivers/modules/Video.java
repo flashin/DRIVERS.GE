@@ -4,25 +4,19 @@
  */
 package ge.drivers.modules;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.media.MediaPlayer.OnErrorListener;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
-import android.widget.VideoView;
+import ge.drivers.app.VideoActivity;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
 import ge.drivers.lib.ServerConn;
@@ -43,8 +37,6 @@ public class Video {
     private JSONObject video;
     private String folder;
     private Context cont = null;
-    private ProgressDialog progDailog = null;
-    private VideoView VID = null;
 
     public Video(JSONObject obj, String createDate) {
 
@@ -69,8 +61,8 @@ public class Video {
             layers[1] = context.getResources().getDrawable(MyResource.getDrawable(context, "play_button"));
 
             LayerDrawable ld = new LayerDrawable(layers);
-            int lR = (width - height / 2) / 2;
-            int tB = (height - height / 2) / 2;
+            int lR = (int)((width - height / 2) / 1);
+            int tB = (int)((height - height / 6) / 2);
             ld.setLayerInset(1, lR, tB, lR, tB);
             IMG.setLayoutParams(fp);
             IMG.setImageDrawable(ld);
@@ -80,41 +72,12 @@ public class Video {
 
                 public void onClick(View v) {
                     try {
-                    	progDailog = MyAlert.getStandardProgress(cont);
-                    	
-                        String videoUrl = ServerConn.url + ServerConn.video + folder + video.getString("video_url") + ".mp4";
+                        // the content
+                        String videoUrl = folder + video.getString("video_url");
                         
-                        MediaController mediaController = new MediaController(cont);
-                        VID = new VideoView(cont);
-                        VID.setLayoutParams(new ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                        VID.setMediaController(mediaController);
-                        VID.setVideoPath(videoUrl);
-                        VID.requestFocus();
-                        
-                        mediaController.show();                        
-                        
-                        VID.setOnPreparedListener(new OnPreparedListener() {
-
-                            public void onPrepared(MediaPlayer mp) {
-                                // TODO Auto-generated method stub
-                            	progDailog.dismiss();
-                            	VID.start();
-                            }
-                        });
-                        VID.setOnErrorListener(new OnErrorListener() {
-
-                            public boolean onError(MediaPlayer mp, int what, int extra) {
-                                // TODO Auto-generated method stub
-                            	progDailog.dismiss();
-                            	return false;
-                            }
-                        });
-                        
-                        Dialog dialog = new Dialog(cont);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(VID);
-                        
-                        dialog.show();
+                        Intent intent = new Intent(cont, VideoActivity.class);
+                        intent.putExtra("video_url", videoUrl);
+                        cont.startActivity(intent);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

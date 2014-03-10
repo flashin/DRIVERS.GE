@@ -188,6 +188,7 @@ int id second_line 0x7f060022
 int id small 0x7f060005
 int id terrain 0x7f060003
 int id upload_list 0x7f060033
+int id video_cont 0x7f060036
 int integer google_play_services_version 0x7f080000
 int layout com_facebook_friendpickerfragment 0x7f030000
 int layout com_facebook_login_activity_layout 0x7f030001
@@ -211,6 +212,7 @@ int layout title_bar 0x7f030012
 int layout title_bar_2 0x7f030013
 int layout upload 0x7f030014
 int layout upload_item 0x7f030015
+int layout video_item 0x7f030016
 int raw header_border 0x7f040000
 int raw small_logo 0x7f040001
 int string app_id 0x7f070033
@@ -307,6 +309,7 @@ int string upload_incomplete 0x7f070054
 int string upload_post_title 0x7f070052
 int string upload_submit 0x7f070055
 int string uploading_message 0x7f07004c
+int string video_title_bar 0x7f07005e
 int style appTheme 0x7f0a0002
 int style com_facebook_loginview_default_style 0x7f0a0000
 int style com_facebook_loginview_silver_style 0x7f0a0001

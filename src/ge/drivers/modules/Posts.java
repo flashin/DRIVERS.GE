@@ -52,7 +52,7 @@ public class Posts extends ArrayAdapter<Post> {
     //load posts from server
     public void loadPosts(int page) {
 
-        progDailog = ProgressDialog.show(context, null, "Please Wait...", true);
+        progDailog = MyAlert.getStandardProgress(context);
         allowLoading = false;
         PostsLoader pl = new PostsLoader();
         pl.execute(new String[]{"search?page=" + page});

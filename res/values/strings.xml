@@ -43,4 +43,5 @@
     <string name="delete_post_title">წაშლა</string>
     <string name="delete_post_question">დარწმუნებული ხართ რომ გსურთ ატვირთული მასალის წაშლა?</string>
     <string name="rate_post_error">შეცდომა</string>
+    <string name="video_title_bar">ვიდეო</string>
 </resources>

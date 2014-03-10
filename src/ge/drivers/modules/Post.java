@@ -188,6 +188,10 @@ public class Post {
             //add videos
             if (this.videos != null) {
                 int viewWidth = context.getResources().getDisplayMetrics().widthPixels;
+                int viewHeight = context.getResources().getDisplayMetrics().heightPixels;
+                if (viewHeight < viewWidth){
+                    viewWidth = viewHeight;
+                }
                 for (int i = 0; i < videos.length; i++) {
                     itemsCont.addView(this.videos[i].getView(context, viewWidth));
                 }

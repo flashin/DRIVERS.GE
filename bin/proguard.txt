@@ -2,7 +2,7 @@
 # view res/layout/upload.xml #generated:2
 -keep class android.support.v4.widget.DrawerLayout { <init>(...); }
 
-# view AndroidManifest.xml #generated:27
+# view AndroidManifest.xml #generated:37
 -keep class com.facebook.LoginActivity { <init>(...); }
 
 # view res/layout/com_facebook_usersettingsfragment.xml #generated:48
@@ -11,8 +11,11 @@
 # view AndroidManifest.xml #generated:14
 -keep class ge.drivers.app.MainActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:21
+# view AndroidManifest.xml #generated:22
 -keep class ge.drivers.app.UploadActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:29
+-keep class ge.drivers.app.VideoActivity { <init>(...); }
 
 # onClick res/layout/upload.xml #generated:71
 -keepclassmembers class * { *** createNewPost(...); }

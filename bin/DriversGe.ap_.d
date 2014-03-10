@@ -404,6 +404,7 @@ D:\Java\DriversGe\res\layout\title_bar.xml \
 D:\Java\DriversGe\res\layout\title_bar_2.xml \
 D:\Java\DriversGe\res\layout\upload.xml \
 D:\Java\DriversGe\res\layout\upload_item.xml \
+D:\Java\DriversGe\res\layout\video_item.xml \
 D:\Java\DriversGe\res\raw\header_border.png \
 D:\Java\DriversGe\res\raw\small_logo.png \
 D:\Java\DriversGe\res\values\strings.xml \
