@@ -7,8 +7,10 @@ package ge.drivers.modules;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import ge.drivers.lib.MyAlert;
 
 import java.io.IOException;
@@ -36,16 +38,66 @@ public class Image {
     //Returns Image view with the image
     public View getView(Context context) {
 
-        try {
-            ImageView IMG = new ImageView(context);
-            Bitmap bm = downloadImage(ServerConn.url + ServerConn.img + this.folder + this.image.getString("image_path"));
-            IMG.setImageBitmap(bm);
-            
-            return IMG;
+        final Context cont = context;
+        int viewWidth = cont.getResources().getDisplayMetrics().widthPixels;
+        int viewHeight = cont.getResources().getDisplayMetrics().heightPixels;
+        if (viewHeight < viewWidth) {
+            viewWidth = viewHeight;
         }
-        catch (Exception e){
+        final int standardWidth = viewWidth;
+        viewHeight = (viewWidth / 16) * 9;
+
+        try {
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(viewWidth, viewHeight);
+            final LinearLayout container = new LinearLayout(context);
+            container.setLayoutParams(lp);
+            
+            final ImageView IMG = new ImageView(context);
+            LinearLayout.LayoutParams fp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            IMG.setLayoutParams(fp);
+            
+            String img_url = ServerConn.url + ServerConn.img + folder + image.getString("image_path");
+            AsyncTask loader = new AsyncTask<String, Void, Bitmap>() {
+
+                private String error = null;
+
+                @Override
+                protected Bitmap doInBackground(String... args) {
+
+                    try {
+                        Bitmap bm = downloadImage(args[0]);
+                        return bm;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap result) {
+
+                    if (result != null) {
+                        float width = result.getWidth();
+                        float height = result.getHeight();
+
+                        if (width > standardWidth) {
+                            height = height * (standardWidth / width);
+                            width = standardWidth;
+                        }
+
+                        IMG.setImageBitmap(result);
+                        container.getLayoutParams().width = (int)width;
+                        container.getLayoutParams().height = (int)height;
+                        container.addView(IMG);
+                    }
+                }
+            };
+            loader.execute(new String[]{img_url});
+
+            return container;
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }        
+        }
     }
 
     // Creates Bitmap from InputStream and returns it

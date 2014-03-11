@@ -11,8 +11,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -21,9 +19,7 @@ import com.google.android.gms.common.Scopes;
 import ge.drivers.app.MainActivity;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.ServerConn;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 

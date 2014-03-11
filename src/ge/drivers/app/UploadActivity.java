@@ -51,7 +51,7 @@ public class UploadActivity extends CommonActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         
-        if (requestCode == 1022){
+        if (requestCode == 1022 && data != null){
             String path = upload.getPath(data.getData());
             upload.uploadFile(path);
         }

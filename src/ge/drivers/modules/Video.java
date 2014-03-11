@@ -11,7 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.view.Gravity;
+import android.os.AsyncTask;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -36,7 +36,6 @@ public class Video {
     //Video data in jsonObject
     private JSONObject video;
     private String folder;
-    private Context cont = null;
 
     public Video(JSONObject obj, String createDate) {
 
@@ -49,32 +48,61 @@ public class Video {
 
         try {
             int height = (width / 16) * 9;
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
-            LinearLayout.LayoutParams fp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            LinearLayout container = new LinearLayout(context);
+            final int w = width;
+            final int h = height;
+            final Context cont = context;
+            final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
+            final LinearLayout.LayoutParams fp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            final LinearLayout container = new LinearLayout(context);
             container.setLayoutParams(lp);
 
-            ImageView IMG = new ImageView(context);
-            String screenUrl = ServerConn.url + ServerConn.screen + this.folder + this.video.getString("video_thumbnail");
-            Drawable[] layers = new Drawable[2];
-            layers[0] = this.drawableFromUrl(screenUrl);
-            layers[1] = context.getResources().getDrawable(MyResource.getDrawable(context, "play_button"));
+            final ImageView IMG = new ImageView(context);
 
-            LayerDrawable ld = new LayerDrawable(layers);
-            int lR = (int)((width - height / 2) / 1);
-            int tB = (int)((height - height / 6) / 2);
-            ld.setLayerInset(1, lR, tB, lR, tB);
-            IMG.setLayoutParams(fp);
-            IMG.setImageDrawable(ld);
+            String screenUrl = ServerConn.url + ServerConn.screen + folder + video.getString("video_thumbnail");
+            AsyncTask loader = new AsyncTask<String, Void, LayerDrawable>() {
 
-            cont = context;
+                private String error = null;
+
+                @Override
+                protected LayerDrawable doInBackground(String... args) {
+
+                    try {
+                        Drawable[] layers = new Drawable[2];
+                        layers[0] = drawableFromUrl(args[0]);
+                        layers[1] = cont.getResources().getDrawable(MyResource.getDrawable(cont, "play_button"));
+
+                        LayerDrawable ld = new LayerDrawable(layers);
+                        int lR = (int) ((w - h / 3) / 1);
+                        int tB = (int) ((w - h / 2) / 2);
+                        ld.setLayerInset(1, lR, tB, lR, tB);
+
+                        return ld;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(LayerDrawable result) {
+
+                    if (result != null) {
+                        IMG.setImageDrawable(result);
+                        IMG.setLayoutParams(fp);
+
+                        container.addView(IMG);
+                    }
+                }
+            };
+            loader.execute(new String[]{screenUrl});
+
             OnClickListener clickListener = new OnClickListener() {
 
                 public void onClick(View v) {
                     try {
                         // the content
                         String videoUrl = folder + video.getString("video_url");
-                        
+
                         Intent intent = new Intent(cont, VideoActivity.class);
                         intent.putExtra("video_url", videoUrl);
                         cont.startActivity(intent);
@@ -84,7 +112,6 @@ public class Video {
                 }
             };
             IMG.setOnClickListener(clickListener);
-            container.addView(IMG);
 
             return container;
         } catch (Exception e) {

@@ -32,7 +32,7 @@ public class Posts extends ArrayAdapter<Post> {
     private ProgressDialog progDailog;
     private Posts self;
     private boolean allowLoading = true;
-    private Map<String,Object> params;
+    private Map<String, Object> params;
 
     public Posts(Context context, int res, Intent intent) {
 
@@ -40,10 +40,10 @@ public class Posts extends ArrayAdapter<Post> {
         this.posts = new ArrayList<Post>();
         this.context = context;
         this.self = this;
-        this.params = new HashMap<String,Object>();
-        
-        if (intent != null && intent.getExtras() != null){
-            for (String key : intent.getExtras().keySet()){
+        this.params = new HashMap<String, Object>();
+
+        if (intent != null && intent.getExtras() != null) {
+            for (String key : intent.getExtras().keySet()) {
                 params.put(key.toLowerCase(), intent.getExtras().getString(key));
             }
         }
@@ -71,18 +71,36 @@ public class Posts extends ArrayAdapter<Post> {
         return allowLoading;
     }
 
-    private class PostsLoader extends AsyncTask<String, Void, String> {
+    private class PostsLoader extends AsyncTask<String, Void, JSONObject> {
 
         private int start;
+        private String error = null;
 
         @Override
-        protected String doInBackground(String... urls) {
-            JSONObject obj = ServerConn.postJson(urls[0], params);
+        protected JSONObject doInBackground(String... urls) {
 
-            start = posts.size();
             try {
-                if (obj.getString("success").compareTo("true") == 0) {
-                    JSONArray jarr = obj.getJSONArray("data");
+                JSONObject obj = ServerConn.postJson(urls[0], params);
+                return obj;
+            } catch (Exception e) {
+                error = e.toString();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+            progDailog.dismiss();
+            
+            if (error != null){
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            try {
+                start = posts.size();
+                if (result.getString("success").compareTo("true") == 0) {
+                    JSONArray jarr = result.getJSONArray("data");
                     int size = jarr.length();
 
                     Post tmp = null;
@@ -90,26 +108,18 @@ public class Posts extends ArrayAdapter<Post> {
                         tmp = new Post(jarr.getJSONObject(i), context);
                         posts.add(tmp);
                     }
+
+                    for (int i = start; i < posts.size(); i++) {
+                        self.add(posts.get(i));
+                    }
+
+                    //If no items was returned, do not load again
+                    if (start < posts.size()) {
+                        allowLoading = true;
+                    }
                 }
-
-                return urls[0];
             } catch (Exception e) {
-                progDailog.dismiss();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            progDailog.dismiss();
-
-            for (int i = start; i < posts.size(); i++) {
-                self.add(posts.get(i));
-            }
-
-            //If no items was returned, do not load again
-            if (start < posts.size()) {
-                allowLoading = true;
+                MyAlert.alertWin(context, e.toString());
             }
         }
     }
