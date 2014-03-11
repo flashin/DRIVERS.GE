@@ -30,7 +30,7 @@ public class MyAlert {
                 });
         
         AlertDialog alertDialog = alertDialogBuilder.create();
-	alertDialog.show();
+        alertDialog.show();
     }
     
     public static void alertSuccessWin(Context context, String title, String str){
@@ -44,7 +44,7 @@ public class MyAlert {
                 });
         
         AlertDialog alertDialog = alertDialogBuilder.create();
-	alertDialog.show();
+        alertDialog.show();
     }
     
     public static ProgressDialog getStandardProgress(Context context){

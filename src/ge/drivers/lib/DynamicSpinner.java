@@ -5,7 +5,10 @@
 package ge.drivers.lib;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -27,11 +30,13 @@ public class DynamicSpinner {
     private JSONArray[] subarr = null;
     private DynamicSpinner subsp = null;
     private String label;
+    private Context context;
 
     public DynamicSpinner(Context context, String id, String module, String label) {
 
         sp = (Spinner) ((Activity) context).findViewById(MyResource.getResource(context, id));
         this.label = context.getString(MyResource.getString(context, label));
+        this.context = context;
 
         adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -39,7 +44,8 @@ public class DynamicSpinner {
 
         //Models should be stored from makes request
         if (!id.equals("model_id")) {
-            storeData(ServerConn.getJsonArray(module));
+            StoreDataTask sdt = new StoreDataTask();
+            sdt.execute(new String[]{module});
         }
 
         if (id.equals("make_id")) {
@@ -66,6 +72,39 @@ public class DynamicSpinner {
     public void clearAdapter(){
     
         adapter.clear();
+    }
+    
+    private class StoreDataTask extends AsyncTask<String, Void, JSONArray> {
+
+        private String error = null;
+
+        @Override
+        protected JSONArray doInBackground(String... urls) {
+
+            try {
+            	JSONArray obj = ServerConn.getJsonArray(urls[0]);
+                return obj;
+            } catch (Exception e) {
+                error = e.toString();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray result) {
+
+            if (error != null) {
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            try {
+            	storeData(result);
+            }
+            catch (Exception e){
+            	MyAlert.alertWin(context, e.toString());
+            }
+        }
     }
 
     public void storeData(JSONArray arr) {

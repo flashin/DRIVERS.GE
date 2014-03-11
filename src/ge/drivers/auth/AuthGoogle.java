@@ -7,6 +7,7 @@ package ge.drivers.auth;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -72,16 +73,6 @@ public class AuthGoogle {
 
         if (account != null) {
             try {
-                /*
-                 * AccountManagerFuture<Bundle> accountManagerFuture;
-                 * accountManagerFuture = mAccountManager.getAuthToken(account,
-                 * "android", null, activity, null, null);
-                 *
-                 * Bundle authTokenBundle = accountManagerFuture.getResult();
-                 * token =
-                 * authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN).toString();
-                 * this.setInfoByToken();
-                 */
                 GoogleLoginer gl = new GoogleLoginer();
                 gl.execute((Void) null);
 
@@ -93,16 +84,10 @@ public class AuthGoogle {
         }
     }
 
-    public void setInfoByToken() {
+    public void setInfoByToken(JSONObject driversRes) {
 
         try {
-            Map<String, Object> p = new HashMap<String, Object>();
-            p.put("token", token);
-            p.put("service", "GoogleService");
-
-            JSONObject driversRes = ServerConn.postJsonSimple("login", p);
-
-            if (driversRes.getString("success").equals("true")) {
+        	if (driversRes.getString("success").equals("true")) {
                 //TODO Login successfull Start your next activity
                 userId = driversRes.getInt("userId");
                 sessionId = driversRes.getString("sessionId");
@@ -119,19 +104,32 @@ public class AuthGoogle {
         }
     }
 
-    private class GoogleLoginer extends AsyncTask<Object, Void, String> {
+    private class GoogleLoginer extends AsyncTask<Object, Void, JSONObject> {
 
         private int start;
         private String error = null;
+        private ProgressDialog prog_dialog;
+        
+        public GoogleLoginer(){
+        	
+        	prog_dialog = MyAlert.getStandardProgress(activity);
+        }
 
         @Override
-        protected String doInBackground(Object... urls) {
+        protected JSONObject doInBackground(Object... urls) {
             token = null;
             try {
                 String api_scope = Scopes.PLUS_LOGIN + " " + Scopes.PLUS_ME + " email";
                 //String scope = "oauth2:server:client_id:" + clientId + ":api_scope:" + api_scope;
                 String scope = "oauth2:" + api_scope;
                 token = GoogleAuthUtil.getToken(activity, account.name, scope);
+                
+                Map<String, Object> p = new HashMap<String, Object>();
+                p.put("token", token);
+                p.put("service", "GoogleService");
+
+                JSONObject driversRes = ServerConn.postJsonSimple("login", p);
+                return driversRes;
             } catch (UserRecoverableAuthException e) {
                 activity.startActivityForResult(e.getIntent(), 1021); //1021 google result code
             } catch (GoogleAuthException e) {
@@ -143,15 +141,17 @@ public class AuthGoogle {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(JSONObject result) {
+        	
+        	prog_dialog.dismiss();
 
             if (error != null) {
                 MyAlert.alertWin(activity, "Google Login Exception: " + error);
                 return;
             }
-            MyAlert.alertWin(activity, token);
-            if (token != null) {
-                setInfoByToken();
+
+            if (token != null && result != null) {
+                setInfoByToken(result);
             } else {
                 MyAlert.alertWin(activity, "Google Access Token not found");
             }

@@ -36,9 +36,6 @@ public class UploadActivity extends CommonActivity {
             requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             setContentView(R.layout.upload);
             getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar_2);
-
-            //Authentification
-            Auth.getInstance().startAuth(this, icicle);
             
             ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
             Menu menu = new Menu(mDrawerList, R.layout.menu_item);

@@ -36,6 +36,11 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.Scopes;
+
 /**
  *
  * @author alexx
@@ -63,27 +68,9 @@ public class Upload {
         carMake = new DynamicSpinner(context, "make_id", "makes", "post_make");
         postCity = new DynamicSpinner(context, "city_id", "cities", "post_city");
 
-        JSONObject data = ServerConn.getJson("uploadtemp");
-        try {
-            if (data.has("error")) {
-                MyAlert.alertWin(context, data.optString("error"));
-            } else {
-                JSONArray arr = data.getJSONArray("files");
-                int size = arr.length();
-                for (int i = 0; i < size; i++) {
-                    if (arr.getJSONObject(i).has("error")) {
-                        MyAlert.alertWin(context, arr.getJSONObject(i).getString("error"));
-                        continue;
-                    }
-                    items.add(arr.getJSONObject(i).getString("name"));
-                    itemviews.add(getFileItemView(arr.getJSONObject(i)));
-                }
-            }
-        } catch (Exception e) {
-            MyAlert.alertWin(context, "" + e);
-        }
+        LoadFormTask ft = new LoadFormTask();
+        ft.execute((Void) null);
 
-        uploadList.setAdapter(new UploadAdapter(res));
         uploadList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -161,6 +148,61 @@ public class Upload {
             throw new RuntimeException(e);
         }
     }
+    
+    private class LoadFormTask extends AsyncTask<Object, Void, JSONObject> {
+
+        private int start;
+        private String error = null;
+        private ProgressDialog prog_dialog;
+        
+        public LoadFormTask(){
+        	
+        	prog_dialog = MyAlert.getStandardProgress(context);
+        }
+
+        @Override
+        protected JSONObject doInBackground(Object... urls) {
+
+            try {
+            	JSONObject data = ServerConn.getJson("uploadtemp");
+            	return data;
+            } catch (Exception e) {
+                error = e.toString();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+        	
+        	prog_dialog.dismiss();
+
+            if (error != null) {
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            try {
+                if (result.has("error")) {
+                    MyAlert.alertWin(context, result.getString("error"));
+                } else {
+                    JSONArray arr = result.getJSONArray("files");
+                    int size = arr.length();
+                    for (int i = 0; i < size; i++) {
+                        if (arr.getJSONObject(i).has("error")) {
+                            MyAlert.alertWin(context, arr.getJSONObject(i).getString("error"));
+                            continue;
+                        }
+                        items.add(arr.getJSONObject(i).getString("name"));
+                        itemviews.add(getFileItemView(arr.getJSONObject(i)));
+                    }
+                }
+                uploadList.setAdapter(new UploadAdapter(layoutRes));
+            } catch (Exception e) {
+                MyAlert.alertWin(context, "" + e);
+            }            
+        }
+    }
 
     public void uploadFile(String uri) {
 
@@ -229,6 +271,89 @@ public class Upload {
             }
         }
     }
+    
+    private class CreatePostTask extends AsyncTask<Object, Integer, JSONObject> {
+
+        private JSONObject res;
+        private String error = null;
+        private ProgressDialog prog_dialog;
+
+        public CreatePostTask() {
+        	prog_dialog = MyAlert.getStandardProgress(context);
+        }
+
+        @Override
+        protected JSONObject doInBackground(Object... urls) {
+
+        	try {
+	        	Map<String, Object> hm = new HashMap<String, Object>();
+	
+	            hm.put("plate_number", getSearchParam("plate_number"));
+	            hm.put("make_id", getSearchParam("make_id"));
+	            hm.put("model_id", getSearchParam("model_id"));
+	            hm.put("city_id", getSearchParam("city_id"));
+	            hm.put("open_comment", getSearchParam("open_comment"));
+	            hm.put("is_anonymous", getSearchParam("is_anonymous"));
+	
+	            String module = "createpost";
+	            
+	            return ServerConn.postJson(module, hm);
+        	}
+        	catch (Exception e){
+        		error = e.toString();
+        		return null;
+        	}
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+
+        	prog_dialog.dismiss();
+
+            //Error handling
+            if (error != null) {
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            try {
+	            String win_title = context.getString(MyResource.getString(context, "upload_post_title"));
+	            String win_completed = context.getString(MyResource.getString(context, "upload_completed"));
+	            String win_incomplete = context.getString(MyResource.getString(context, "upload_incomplete"));
+	            
+	            if (result.getString("success").equals("true")) {
+	            	String dialog_mess = null;
+	                if (result.has("completed") && result.getString("completed").equals("0")) {
+	                	dialog_mess = win_incomplete;
+	                } else {
+	                	dialog_mess = win_completed;
+	                }	                
+	                
+	                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+	                alertDialogBuilder.setTitle(win_title);
+	                alertDialogBuilder.setMessage(dialog_mess);
+	                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){  
+	                            public void onClick(DialogInterface dialog, int id) {  
+	                                dialog.dismiss();
+	                                context.startActivity(new Intent(context, UploadActivity.class));
+	                            }  
+	                        });
+	                
+	                AlertDialog alertDialog = alertDialogBuilder.create();
+	                alertDialog.show();
+	            } else {
+	                String error = "Unknown Error. Try Again Later";
+	                if (result.has("error")) {
+	                    error = result.getString("error");
+	                }
+	                MyAlert.alertSuccessWin(context, win_title, error);
+	            }
+	            
+            } catch (Exception e) {
+                MyAlert.alertWin(context, "" + e);
+            }
+        }
+    }
 
     public void deleteItem(int position) {
 
@@ -286,39 +411,8 @@ public class Upload {
 
     public void createNewPost() {
 
-        Map<String, Object> hm = new HashMap<String, Object>();
-
-        hm.put("plate_number", getSearchParam("plate_number"));
-        hm.put("make_id", getSearchParam("make_id"));
-        hm.put("model_id", getSearchParam("model_id"));
-        hm.put("city_id", getSearchParam("city_id"));
-        hm.put("open_comment", getSearchParam("open_comment"));
-        hm.put("is_anonymous", getSearchParam("is_anonymous"));
-
-        String module = "createpost";
-        String win_title = context.getString(MyResource.getString(context, "upload_post_title"));
-        String win_completed = context.getString(MyResource.getString(context, "upload_completed"));
-        String win_incomplete = context.getString(MyResource.getString(context, "upload_incomplete"));
-
-        try {
-            JSONObject obj = ServerConn.postJson(module, hm);
-            if (obj.getString("success").equals("true")) {
-                if (obj.has("completed") && obj.getString("completed").equals("0")) {
-                    MyAlert.alertSuccessWin(context, win_title, win_incomplete);
-                } else {
-                    MyAlert.alertSuccessWin(context, win_title, win_completed);
-                }
-                context.startActivity(new Intent(context, UploadActivity.class));
-            } else {
-                String error = "Unknown Error. Try Again Later";
-                if (obj.has("error")) {
-                    error = obj.getString("error");
-                }
-                MyAlert.alertSuccessWin(context, win_title, error);
-            }
-        } catch (Exception e) {
-            MyAlert.alertSuccessWin(context, win_title, e.toString());
-        }
+    	CreatePostTask cpt = new CreatePostTask();
+    	cpt.execute((Void) null);
     }
 
     public String getSearchParam(String param) {

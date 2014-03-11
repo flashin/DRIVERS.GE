@@ -5,9 +5,15 @@
 package ge.drivers.auth;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import ge.drivers.app.MainActivity;
 import ge.drivers.lib.MyAlert;
+import ge.drivers.lib.MyResource;
 
 import ge.drivers.lib.ServerConn;
 
@@ -20,6 +26,8 @@ import org.json.JSONObject;
 public class Auth {
 
     private static Auth instance = null;
+    private boolean was_checked = false;
+    private Context context;
 
     private Auth() {
         
@@ -35,9 +43,15 @@ public class Auth {
     }
 
     public void startAuth(Activity activity, Bundle savedInstanceState) {
+    	
+    	if (was_checked){
+    		return;
+    	}
+    	this.context = activity;
 
         AuthFB.getInstance().setFBSessionParams(activity, savedInstanceState);
         AuthGoogle.getInstance().setGoogleParams(activity, savedInstanceState);
+        was_checked = true;
     }
 
     public void resultAuth(int requestCode, int resultCode, Intent data) {
@@ -61,10 +75,8 @@ public class Auth {
 
     public void destroyAuth() {
 
-        JSONObject obj = ServerConn.getJson("logout");
-
-        AuthFB.getInstance().stopAppCallback();
-        AuthGoogle.getInstance().stopAppCallback();
+    	LogoutTask lt = new LogoutTask();
+    	lt.execute((Void) null);
     }
 
     public boolean isLogged() {
@@ -106,5 +118,44 @@ public class Auth {
     public boolean isBlocked(){
     
         return AuthFB.getInstance().isBlocked();
+    }
+    
+    private class LogoutTask extends AsyncTask<Object, Void, String> {
+
+        private String error = null;
+        ProgressDialog prog_dialog = null;
+        
+        public LogoutTask(){
+        
+            prog_dialog = MyAlert.getStandardProgress(context);
+            prog_dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Object... urls) {
+
+            try {
+            	JSONObject obj = ServerConn.getJson("logout");
+
+                AuthFB.getInstance().stopAppCallback();
+                AuthGoogle.getInstance().stopAppCallback();
+                return null;
+            } catch (Exception e) {
+                error = e.toString();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            prog_dialog.dismiss();
+            if (error != null) {
+                MyAlert.alertWin(context, error);
+                return;
+            }
+
+            context.startActivity(new Intent(context, MainActivity.class));
+        }
     }
 }

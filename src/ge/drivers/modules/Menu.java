@@ -112,7 +112,6 @@ public class Menu {
                             hm.put("MY_VOTED", "1");
                         } else if (position == 6) {
                             Auth.getInstance().destroyAuth();
-                            context.startActivity(new Intent(context, MainActivity.class));
                         }
                     } else {
                         if (position == 0) {

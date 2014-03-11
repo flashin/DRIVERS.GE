@@ -271,6 +271,7 @@ int string common_signin_button_text 0x7f070012
 int string common_signin_button_text_long 0x7f070013
 int string delete_post_question 0x7f07005c
 int string delete_post_title 0x7f07005b
+int string delete_result 0x7f07005d
 int string delete_uploaded_answer 0x7f070051
 int string delete_uploaded_question 0x7f070050
 int string delete_uploaded_title 0x7f07004f
@@ -295,7 +296,7 @@ int string post_make 0x7f070046
 int string post_model 0x7f070047
 int string post_plate 0x7f070043
 int string post_unlike 0x7f070039
-int string rate_post_error 0x7f07005d
+int string rate_post_error 0x7f07005e
 int string report_hint 0x7f070057
 int string report_result 0x7f070058
 int string report_send 0x7f070059
@@ -309,7 +310,7 @@ int string upload_incomplete 0x7f070054
 int string upload_post_title 0x7f070052
 int string upload_submit 0x7f070055
 int string uploading_message 0x7f07004c
-int string video_title_bar 0x7f07005e
+int string video_title_bar 0x7f07005f
 int style appTheme 0x7f0a0002
 int style com_facebook_loginview_default_style 0x7f0a0000
 int style com_facebook_loginview_silver_style 0x7f0a0001

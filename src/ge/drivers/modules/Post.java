@@ -394,7 +394,7 @@ public class Post {
         @Override
         protected void onPostExecute(JSONObject result) {
 
-            String modal_title = context.getString(MyResource.getString(context, "report_title"));
+            String modal_title = context.getString(MyResource.getString(context, "delete_post_title"));
             prog_dialog.dismiss();
             if (error != null) {
                 MyAlert.alertWin(context, error);
@@ -403,7 +403,7 @@ public class Post {
 
             try {
                 if (result.has("success") && result.getString("success").equals("true")) {
-                    String success_mess = context.getString(MyResource.getString(context, "report_result"));
+                    String success_mess = context.getString(MyResource.getString(context, "delete_result"));
                     MyAlert.alertSuccessWin(context, modal_title, success_mess);
                 } else {
                     error = "Unknown Error. Try Again Later";
