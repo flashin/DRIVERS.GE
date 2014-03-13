@@ -421,13 +421,6 @@ public class Post {
     private class RatePostTask extends AsyncTask<String, Void, JSONObject> {
 
         private String error = null;
-        ProgressDialog prog_dialog = null;
-        
-        public RatePostTask(){
-        
-            prog_dialog = MyAlert.getStandardProgress(context);
-            prog_dialog.show();
-        }
 
         @Override
         protected JSONObject doInBackground(String... urls) {
@@ -444,7 +437,6 @@ public class Post {
         @Override
         protected void onPostExecute(JSONObject result) {
 
-            prog_dialog.dismiss();
             if (error != null) {
                 MyAlert.alertWin(context, error);
                 return;
@@ -460,13 +452,6 @@ public class Post {
 	                } else {
 	                	postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
 	                }
-            	}
-            	else {
-            		error = "Unknown Error. Try Again Later";
-            		if (result.has("error")) {
-                        error = result.getString("error");                        
-                    }
-                    MyAlert.alertSuccessWin(context, context.getString(MyResource.getString(context, "rate_post_error")), error);
             	}
             }
             catch (Exception e){

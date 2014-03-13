@@ -23,6 +23,8 @@ import ge.drivers.lib.ServerConn;
  * @author alexx
  */
 public class VideoActivity extends Activity {
+	
+	private ProgressDialog progDialog = null;
 
     /**
      * Called when the activity is first created.
@@ -31,7 +33,7 @@ public class VideoActivity extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.video_item);
-        final ProgressDialog progDailog = MyAlert.getStandardProgress(this);
+        progDialog = MyAlert.getStandardProgress(this);
         // ToDo add your GUI initialization code here 
 
         try {
@@ -53,7 +55,7 @@ public class VideoActivity extends Activity {
 
                 public void onPrepared(MediaPlayer mp) {
                     // TODO Auto-generated method stub
-                    progDailog.dismiss();
+                	progDialog.dismiss();
                     VID.start();
                 }
             });
@@ -61,7 +63,7 @@ public class VideoActivity extends Activity {
 
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     // TODO Auto-generated method stub
-                    progDailog.dismiss();
+                	progDialog.dismiss();
                     return false;
                 }
             });
@@ -69,8 +71,17 @@ public class VideoActivity extends Activity {
             LinearLayout rl = (LinearLayout) findViewById(R.id.video_cont);
             rl.addView(VID);
         } catch (Exception e) {
-            progDailog.dismiss();
+        	progDialog.dismiss();
             MyAlert.alertWin(this, e.toString());
         }
+    }
+    
+    @Override
+    public void onBackPressed() {
+    	if (progDialog != null){
+    		progDialog.dismiss();
+    		finish();
+    	}
+		super.onBackPressed();
     }
 }
