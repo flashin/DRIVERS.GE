@@ -74,10 +74,6 @@ public class AuthFB {
                 token = session.getAccessToken();
             }
             Session.setActiveSession(session);
-            session.addCallback(statusCallback);
-            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
-                session.openForRead(new Session.OpenRequest(activity).setCallback(statusCallback).setPermissions(permissions));
-            }
         } else {
             token = session.getAccessToken();
         }
@@ -91,7 +87,7 @@ public class AuthFB {
 
             if (!session.isOpened()) {
                 session.openForRead(new Session.OpenRequest(activity).setCallback(statusCallback).setPermissions(permissions));
-            } else {
+            } else {            	
                 Session.openActiveSession(activity, true, statusCallback);
             }
         } catch (Exception e) {
@@ -117,8 +113,9 @@ public class AuthFB {
 
     public void stopAppCallback() {
 
-        Session.getActiveSession().removeCallback(statusCallback);
-        Session.getActiveSession().closeAndClearTokenInformation();
+    	Session session = Session.getActiveSession();
+    	session.closeAndClearTokenInformation();        
+        session.close();
        
         userId = 0;
         sessionId = null;

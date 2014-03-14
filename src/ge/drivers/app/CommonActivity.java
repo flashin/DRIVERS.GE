@@ -43,13 +43,6 @@ public class CommonActivity extends Activity {
         super.onSaveInstanceState(outState);
         Auth.getInstance().saveInstanceStateAuth(outState);
     }
-
-    @Override
-    protected void onStart() {
-        // TODO Add status callback
-        super.onStart();
-        Auth.getInstance().startAuth();
-    }
     
     public void expandLeftMenu(View view){
     
