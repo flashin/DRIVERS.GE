@@ -4,10 +4,11 @@
  */
 package ge.drivers.modules;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -15,19 +16,27 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.ViewGroup;
+import android.widget.*;
+import ge.drivers.app.MainActivity;
+import ge.drivers.app.PostActivity;
+import ge.drivers.app.R;
+import ge.drivers.app.UploadActivity;
 import ge.drivers.auth.Auth;
+import ge.drivers.auth.AuthFB;
+import ge.drivers.auth.AuthGoogle;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
+import ge.drivers.lib.TopProgressBar;
 import ge.drivers.lib.ServerConn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,18 +47,63 @@ import org.json.JSONObject;
 public class Post {
 
     //Post data in jsonObject
+    private int post_id = 0;
     private JSONObject post;
+    private Map<String, String> textData = new HashMap<String, String>();
     private Image[] imgs;
     private Video[] videos;
     private View v = null;
     private TextView postUnlike = null;
     private TextView postLike = null;
     private Context context;
+    private boolean openInner = true;
 
-    public Post(JSONObject obj, Context context) {
+    public Post(int id, Context cont) {
+
+        this.context = cont;
+        this.openInner = false;
+        this.post_id = id;
+        String module = "post?id=" + id;
+
+        final TopProgressBar pb = MyAlert.getStandardProgress(context);
+        AsyncTask loader = new AsyncTask<String, Void, JSONObject>() {
+
+            @Override
+            protected JSONObject doInBackground(String... args) {
+
+                try {
+                    return ServerConn.getJson(args[0]);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject result) {
+
+                pb.dismiss();
+                try {
+                    if (result != null && result.has("data")) {
+                        buildData(result.getJSONObject("data"));
+                        drawInnerPostView();
+                    }
+                } catch (Exception e) {
+                    MyAlert.alertWin(context, e.toString());
+                }
+            }
+        };
+        loader.execute(new String[]{module});
+    }
+
+    public Post(JSONObject obj, Context cont) {
+
+        this.context = cont;
+        buildData(obj);
+    }
+
+    public void buildData(JSONObject obj) {
 
         this.post = obj;
-        this.context = context;
 
         JSONObject jarr;
         JSONObject jobj;
@@ -59,16 +113,28 @@ public class Post {
         //If post has images
         try {
             createDate = obj.getString("create_date");
-            jarr = obj.getJSONObject("images");
-            size = jarr.length();
 
-            Iterator<String> iter = jarr.keys();
-            this.imgs = new Image[size];
-            int i = 0;
-            while (iter.hasNext() && i < size) {
-                jobj = jarr.getJSONObject(iter.next());
+            if (openInner) {
+                jarr = obj.getJSONObject("images");
+                size = jarr.length();
 
-                this.imgs[i++] = new Image(jobj, createDate);
+                Iterator<String> iter = jarr.keys();
+                this.imgs = new Image[size];
+                int i = 0;
+                while (iter.hasNext() && i < size) {
+                    jobj = jarr.getJSONObject(iter.next());
+
+                    this.imgs[i++] = new Image(jobj, createDate);
+                }
+            } else {
+                JSONArray arr = obj.getJSONArray("images");
+                if (arr != null) {
+                    size = arr.length();
+                    this.imgs = new Image[size];
+                    for (int i = 0; i < size; i++) {
+                        this.imgs[i] = new Image(arr.getJSONObject(i), createDate);
+                    }
+                }
             }
         } catch (JSONException e) {
             this.imgs = null;
@@ -77,101 +143,157 @@ public class Post {
         //If post has videos
         try {
             createDate = obj.getString("create_date");
-            jarr = obj.getJSONObject("videos");
-            size = jarr.length();
-            this.videos = new Video[size];
+            if (openInner) {
+                jarr = obj.getJSONObject("videos");
+                size = jarr.length();
+                this.videos = new Video[size];
 
-            Iterator<String> iter = jarr.keys();
-            int i = 0;
-            while (iter.hasNext() && i < size) {
-                jobj = jarr.optJSONObject(iter.next());
+                Iterator<String> iter = jarr.keys();
+                int i = 0;
+                while (iter.hasNext() && i < size) {
+                    jobj = jarr.optJSONObject(iter.next());
 
-                this.videos[i++] = new Video(jobj, createDate);
+                    this.videos[i++] = new Video(jobj, createDate);
+                }
+            } else {
+                JSONArray arr = obj.getJSONArray("videos");
+                if (arr != null) {
+                    size = arr.length();
+                    this.videos = new Video[size];
+                    for (int i = 0; i < size; i++) {
+                        this.videos[i] = new Video(arr.getJSONObject(i), createDate);
+                    }
+                }
             }
         } catch (JSONException e) {
             this.videos = null;
+        }
+
+        //text data
+        try {
+            this.post_id = post.getInt("id");
+            String[] fields = {"make_name", "model_name", "plate_number", "open_comment", "user_name"};
+            size = fields.length;
+            for (int i = 0; i < size; i++) {
+                if (post.has(fields[i]) && !post.getString(fields[i]).equals("null")) {
+                    textData.put(fields[i], postStr(post.getString(fields[i])));
+                } else {
+                    textData.put(fields[i], "");
+                }
+            }
+        } catch (Exception e) {
+            MyAlert.alertWin(context, e.toString());
         }
 
         this.createView(context);
     }
 
     //create view
-    public void createView(Context context) {
+    public void createView(Context cont) {
 
         if (v != null) {
             return;
         }
 
         try {
+            OnClickListener openInnerListener = null;
+            if (openInner) {
+                openInnerListener = new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        try {
+                            Intent intent = new Intent(context, PostActivity.class);
+                            intent.putExtra("id", post_id);
+                            context.startActivity(intent);
+                        } catch (Exception e) {
+                            MyAlert.alertWin(context, e.toString());
+                        }
+                    }
+                };
+            }
+
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             LinearLayout playout = (LinearLayout) inflater.inflate(MyResource.getLayout(context, "post"), null);
 
             TextView postTitle = (TextView) playout.getChildAt(0);
-            postTitle.setText(post.getString("make_name") + " " + post.getString("model_name") + " / " + post.getString("plate_number"));
+            postTitle.setText(textData.get("make_name") + " " + textData.get("model_name") + " / " + textData.get("plate_number"));
 
             TextView postComment = (TextView) ((LinearLayout) playout.getChildAt(1)).getChildAt(0);
-            postComment.setText(post.getString("open_comment"));
+            postComment.setText(textData.get("open_comment"));
 
             LinearLayout actionIcon = (LinearLayout) ((LinearLayout) playout.getChildAt(1)).getChildAt(1);
-            if (post.getString("is_owner").equals("1")){
-            	actionIcon.addView(getDeleteIcon());
-            }
-            else {
-            	actionIcon.addView(getReportIcon());
+            if (post.getString("is_owner").equals("1")) {
+                actionIcon.addView(getDeleteIcon());
+            } else {
+                actionIcon.addView(getReportIcon());
             }
 
             LinearLayout itemsCont = (LinearLayout) playout.getChildAt(2);
 
             LinearLayout bottomBar = (LinearLayout) playout.getChildAt(3);
             TextView postAuthor = (TextView) bottomBar.getChildAt(0);
-            postAuthor.setText(context.getString(MyResource.getString(context, "post_author")) + ": " + post.getString("user_name"));
+            postAuthor.setText(context.getString(MyResource.getString(context, "post_author")) + ": " + textData.get("user_name"));
             TextView postDate = (TextView) bottomBar.getChildAt(1);
             postDate.setText(context.getString(MyResource.getString(context, "post_date")) + ": " + post.getString("create_date"));
 
+            if (openInnerListener != null) {
+                postTitle.setClickable(true);
+                postTitle.setOnClickListener(openInnerListener);
+
+                postComment.setClickable(true);
+                postComment.setOnClickListener(openInnerListener);
+
+                postAuthor.setClickable(true);
+                postAuthor.setOnClickListener(openInnerListener);
+
+                postDate.setClickable(true);
+                postDate.setOnClickListener(openInnerListener);
+            }
+
             LinearLayout likeBar = (LinearLayout) playout.getChildAt(4);
             postUnlike = (TextView) likeBar.getChildAt(0);
-            postUnlike.setClickable(true);      
+            postUnlike.setClickable(true);
             postUnlike.setText(context.getString(MyResource.getString(context, "post_unlike")) + " (" + post.getString("unlike_count") + ")");
-            if (Auth.getInstance().isLogged() && post.getString("like_value").equals("null")){
-	            postUnlike.setOnClickListener(new OnClickListener(){
-	            	
-	            	@Override
-	            	public void onClick(View v){
-	            		String[] p = new String[1];
-	            		p[0] = "dislike/";
-	            		try {
-	            			p[0] = p[0] + post.getString("id");
-	            		}
-	            		catch (Exception e){
-	            			p[0] = p[0] + "0";
-	            		}
-	            		RatePostTask rt = new RatePostTask();
-	                    rt.execute(p);
-	            	}
-	            });
+            if (Auth.getInstance().isLogged() && post.getString("like_value").equals("null")) {
+                postUnlike.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        String[] p = new String[1];
+                        p[0] = "dislike/";
+                        try {
+                            p[0] = p[0] + post.getString("id");
+                        } catch (Exception e) {
+                            p[0] = p[0] + "0";
+                        }
+                        RatePostTask rt = new RatePostTask();
+                        rt.execute(p);
+                    }
+                });
             }
-            
+
             postLike = (TextView) likeBar.getChildAt(1);
             postLike.setClickable(true);
             postLike.setText(context.getString(MyResource.getString(context, "post_like")) + " (" + post.getString("like_count") + ")");
-            if (Auth.getInstance().isLogged() && post.getString("like_value").equals("null")){
-	            postLike.setOnClickListener(new OnClickListener(){
-	            	
-	            	@Override
-	            	public void onClick(View v){
-	            		String[] p = new String[1];
-	            		p[0] = "like/";
-	            		try {
-	            			p[0] = p[0] + post.getString("id");
-	            		}
-	            		catch (Exception e){
-	            			p[0] = p[0] + "0";
-	            		}
-	            		RatePostTask rt = new RatePostTask();
-	                    rt.execute(p);
-	            	}
-	            });
+            if (Auth.getInstance().isLogged() && post.getString("like_value").equals("null")) {
+                postLike.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        String[] p = new String[1];
+                        p[0] = "like/";
+                        try {
+                            p[0] = p[0] + post.getString("id");
+                        } catch (Exception e) {
+                            p[0] = p[0] + "0";
+                        }
+                        RatePostTask rt = new RatePostTask();
+                        rt.execute(p);
+                    }
+                });
             }
             if (post.getString("like_value").compareTo("0") == 0) {
                 postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
@@ -182,14 +304,18 @@ public class Post {
             //add images
             if (this.imgs != null) {
                 for (int i = 0; i < imgs.length; i++) {
-                    itemsCont.addView(this.imgs[i].getView(context));
+                    View im = this.imgs[i].getView(context);
+                    if (openInnerListener != null) {
+                        im.setOnClickListener(openInnerListener);
+                    }
+                    itemsCont.addView(im);
                 }
             }
             //add videos
             if (this.videos != null) {
                 int viewWidth = context.getResources().getDisplayMetrics().widthPixels;
                 int viewHeight = context.getResources().getDisplayMetrics().heightPixels;
-                if (viewHeight < viewWidth){
+                if (viewHeight < viewWidth) {
                     viewWidth = viewHeight;
                 }
                 for (int i = 0; i < videos.length; i++) {
@@ -207,6 +333,84 @@ public class Post {
     public View getView() {
 
         return v;
+    }
+
+    public void drawInnerPostView() {
+
+        try {
+            ListView actionsList = (ListView) ((Activity) context).findViewById(MyResource.getResource(context, "post_actions"));
+            final ActionsAdapter actions = new ActionsAdapter(MyResource.getResource(context, "post_action_item"), new ArrayList<String>());
+            actionsList.setAdapter(actions);
+
+            String actionTitle = null;
+            HashMap<String, String> hm = null;
+
+            actions.add(actionTitle);
+            actions.addAction(actionTitle, hm);
+
+            if (post.getString("is_anonymous").equals("0")) {
+                actionTitle = post.getString("user_name") + context.getString(MyResource.getString(context, "action_user_posts"));
+                hm = new HashMap<String, String>();
+                hm.put("user", post.getString("user_id"));
+                actions.addAction(actionTitle, hm);
+                actions.add(actionTitle);
+            }
+
+            actionTitle = post.getString("plate_number") + " " + context.getString(MyResource.getString(context, "action_plate_posts"));
+            hm = new HashMap<String, String>();
+            hm.put("plate", post.getString("plate_number"));
+            actions.addAction(actionTitle, hm);
+            actions.add(actionTitle);
+
+            if (!post.getString("make_name").equals("null")) {
+                actionTitle = post.getString("make_name") + context.getString(MyResource.getString(context, "action_car_posts"));
+                hm = new HashMap<String, String>();
+                hm.put("make", post.getString("make_id"));
+                actions.addAction(actionTitle, hm);
+                actions.add(actionTitle);
+            }
+
+            if (!post.getString("model_name").equals("null")) {
+                actionTitle = post.getString("make_name") + " " + post.getString("model_name") + context.getString(MyResource.getString(context, "action_car_posts"));
+                hm = new HashMap<String, String>();
+                hm.put("make", post.getString("make_id"));
+                hm.put("model", post.getString("model_id"));
+                actions.addAction(actionTitle, hm);
+                actions.add(actionTitle);
+            }
+
+            if (post.getString("city_name").equals("null")) {
+                actionTitle = context.getString(MyResource.getString(context, "action_city_posts")) + " " + post.getString("city_name");
+                hm = new HashMap<String, String>();
+                hm.put("city", post.getString("city_id"));
+                actions.addAction(actionTitle, hm);
+                actions.add(actionTitle);
+            }
+
+            actionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    if (position > 0) {
+                        Map<String, String> hm = actions.getRule(position);
+
+                        Intent intent = new Intent(context, MainActivity.class);
+                        if (!hm.isEmpty()) {
+                            Iterator it = hm.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pairs = (Map.Entry) it.next();
+                                intent.putExtra(pairs.getKey().toString(), pairs.getValue().toString());
+                            }
+                        }
+                        context.startActivity(intent);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //get report post icon
@@ -262,12 +466,11 @@ public class Post {
     private class ReportPostTask extends AsyncTask<String, Void, JSONObject> {
 
         private String error = null;
-        ProgressDialog prog_dialog = null;
-        
-        public ReportPostTask(){
-        
+        TopProgressBar prog_dialog = null;
+
+        public ReportPostTask() {
+
             prog_dialog = MyAlert.getStandardProgress(context);
-            prog_dialog.show();
         }
 
         @Override
@@ -312,7 +515,7 @@ public class Post {
             }
         }
     }
-    
+
     //get delete post icon
     public View getDeleteIcon() {
 
@@ -364,16 +567,15 @@ public class Post {
 
         return IMG;
     }
-    
+
     private class DeletePostTask extends AsyncTask<String, Void, JSONObject> {
 
         private String error = null;
-        ProgressDialog prog_dialog = null;
-        
-        public DeletePostTask(){
-        
+        TopProgressBar prog_dialog = null;
+
+        public DeletePostTask() {
+
             prog_dialog = MyAlert.getStandardProgress(context);
-            prog_dialog.show();
         }
 
         @Override
@@ -408,7 +610,7 @@ public class Post {
                 } else {
                     error = "Unknown Error. Try Again Later";
                     if (result.has("error")) {
-                        error = result.getString("error");                        
+                        error = result.getString("error");
                     }
                     MyAlert.alertSuccessWin(context, modal_title, error);
                 }
@@ -417,7 +619,7 @@ public class Post {
             }
         }
     }
-    
+
     private class RatePostTask extends AsyncTask<String, Void, JSONObject> {
 
         private String error = null;
@@ -443,20 +645,129 @@ public class Post {
             }
 
             try {
-            	if (result.has("success") && result.getString("success").equals("true")){
-	            	postUnlike.setText(context.getString(MyResource.getString(context, "post_unlike")) + " (" + result.getString("unlikes") + ")");
-	            	postLike.setText(context.getString(MyResource.getString(context, "post_like")) + " (" + result.getString("likes") + ")");
-	            	
-	            	if (result.getString("action").equals("1")) {
-	            		postLike.setTypeface(postLike.getTypeface(), Typeface.BOLD);
-	                } else {
-	                	postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
-	                }
-            	}
-            }
-            catch (Exception e){
-            	MyAlert.alertWin(context, e.toString());
+                if (result.has("success") && result.getString("success").equals("true")) {
+                    postUnlike.setText(context.getString(MyResource.getString(context, "post_unlike")) + " (" + result.getString("unlikes") + ")");
+                    postLike.setText(context.getString(MyResource.getString(context, "post_like")) + " (" + result.getString("likes") + ")");
+
+                    if (result.getString("action").equals("1")) {
+                        postLike.setTypeface(postLike.getTypeface(), Typeface.BOLD);
+                    } else {
+                        postUnlike.setTypeface(postUnlike.getTypeface(), Typeface.BOLD);
+                    }
+                }
+            } catch (Exception e) {
+                MyAlert.alertWin(context, e.toString());
             }
         }
+    }
+
+    private String postStr(String str) {
+
+        str = str.replace("\\", "");
+        str = str.replace("&quot;", "\"");
+        str = str.replace("&amp;", "&");
+        str = str.replace("&rsquo;", "’");
+
+        return str;
+    }
+
+    private class ActionsAdapter extends ArrayAdapter<String> {
+
+        List<String> items = new ArrayList<String>();
+        List<Map<String, String>> rules = new ArrayList<Map<String, String>>();
+
+        public ActionsAdapter(int res, List<String> items) {
+
+            super(context, res, items);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (position == 0) {
+                return v;
+            }
+
+            try {
+                int layoutRes = MyResource.getLayout(context, "post_action_item");
+                LayoutInflater loInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View rowView = loInflater.inflate(layoutRes, parent, false);
+
+                TextView textView = (TextView) rowView.findViewById(R.id.post_action_item);
+                textView.setText(items.get(position));
+
+                return rowView;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        public void addAction(String str, Map<String, String> hm) {
+
+            items.add(str);
+            rules.add(hm);
+        }
+
+        public Map<String, String> getRule(int position) {
+
+            return rules.get(position);
+        }
+    }
+
+    public void showShareWindow() {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(context.getString(MyResource.getString(context, "share_title")));
+
+        ListView lv = new ListView(context);
+        final String[] items = new String[]{"Facebook", "Twitter", "Email", "SMS"};
+        final int list_res = MyResource.getLayout(context, "post_share_item");
+
+        lv.setAdapter(new ArrayAdapter<String>(context, list_res, items) {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                LayoutInflater loInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View rowView = loInflater.inflate(list_res, parent, false);
+
+                TextView textView = (TextView) rowView.findViewById(R.id.post_share_item);
+                textView.setText(items[position]);
+
+                return rowView;
+            }
+        });
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0) {
+                    //Facebook share
+                    Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                    share.setType("text/plain");
+                    share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+                    // Add data to the intent, the receiving app will decide
+                    // what to do with it.
+                    share.putExtra(Intent.EXTRA_SUBJECT, "DRIVERS.GE :: " + textData.get("open_comment"));
+                    share.putExtra(Intent.EXTRA_TEXT, ServerConn.url + "Post/view/" + post_id);
+
+                    ((Activity)context).startActivity(Intent.createChooser(share, "Share..."));
+                }
+            }
+        });
+
+        alertDialogBuilder.setView(lv);
+        alertDialogBuilder.setNegativeButton(
+                "Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

@@ -40,7 +40,7 @@ public class Video {
     public Video(JSONObject obj, String createDate) {
 
         this.video = obj;
-        this.folder = createDate.substring(6) + "/" + createDate.substring(3, 5) + "/";
+        this.folder = createDate.substring(6, 10) + "/" + createDate.substring(3, 5) + "/";
     }
 
     //Returns Image view with the image

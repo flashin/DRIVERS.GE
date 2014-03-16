@@ -43,9 +43,9 @@
                 android:layout_width="30sp"
                 android:layout_height="30sp"
                 android:layout_marginRight="5sp"
-                android:src="@drawable/search_button"
+                android:src="@drawable/share_post"
                 android:scaleType="fitXY"
-                android:onClick="expandRightMenu" />
+                android:onClick="sharePost" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

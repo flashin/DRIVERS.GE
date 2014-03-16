@@ -85,9 +85,9 @@ public class AuthFB {
             // TODO Check if there is any Active Session, otherwise Open New Session
             Session session = Session.getActiveSession();
 
-            if (!session.isOpened()) {
+            if (!session.isOpened() && !session.isClosed()) {
                 session.openForRead(new Session.OpenRequest(activity).setCallback(statusCallback).setPermissions(permissions));
-            } else {            	
+            } else {
                 Session.openActiveSession(activity, true, statusCallback);
             }
         } catch (Exception e) {
@@ -105,18 +105,18 @@ public class AuthFB {
         Session session = Session.getActiveSession();
         Session.saveSession(session, outState);
     }
-    
-    public void startAppCallback(){
-    
+
+    public void startAppCallback() {
+
         Session.getActiveSession().addCallback(statusCallback);
     }
 
     public void stopAppCallback() {
 
-    	Session session = Session.getActiveSession();
-    	session.closeAndClearTokenInformation();        
+        Session session = Session.getActiveSession();
+        session.closeAndClearTokenInformation();
         session.close();
-       
+
         userId = 0;
         sessionId = null;
         email = null;
@@ -132,7 +132,7 @@ public class AuthFB {
     }
 
     public void processSessionStatus(Session session, SessionState state, Exception exception) {
-
+        
         if (session != null && session.isOpened()) {
             token = session.getAccessToken();
             if (session.getPermissions().contains("email")) {
@@ -168,7 +168,7 @@ public class AuthFB {
                                     p.put("token", token);
                                     p.put("service", "FacebookService");
                                     JSONObject driversRes = ServerConn.postJsonSimple("login", p);
-                                    
+
                                     if (driversRes.getString("success").equals("true")) {
                                         //TODO Login successfull Start your next activity
                                         userId = driversRes.getInt("userId");
@@ -211,8 +211,8 @@ public class AuthFB {
                         } catch (Exception e) {
                             MyAlert.alertWin(activity, "" + e);
                         }
-                        
-                    block_load = false;
+
+                        block_load = false;
                     }
                 });
             } else {

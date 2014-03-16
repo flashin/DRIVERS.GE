@@ -25,6 +25,14 @@
                 android:src="@drawable/menu_button"
                 android:scaleType="fitXY"
                 android:onClick="expandLeftMenu" />
+            <ProgressBar
+                android:id="@+id/top_progress"
+                style="?android:attr/progressBarStyleInverse"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10sp"
+                android:visibility="invisible" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

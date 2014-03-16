@@ -3,11 +3,11 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#454545"
+    android:background="#ffffff"
     >
 <TextView  
-    style="@style/menuItem"
-    android:id="@+id/menu_item"
+    style="@style/postActionItem"
+    android:id="@+id/post_action_item"
     android:layout_width="match_parent" 
     android:layout_height="wrap_content"
     android:minHeight="50sp"

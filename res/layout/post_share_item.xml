@@ -3,14 +3,14 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#454545"
+    android:background="#ffffff"
     >
 <TextView  
-    style="@style/menuItem"
-    android:id="@+id/menu_item"
+    style="@style/postShareItem"
+    android:id="@+id/post_share_item"
     android:layout_width="match_parent" 
     android:layout_height="wrap_content"
-    android:minHeight="50sp"
-    android:gravity="center_vertical"
+    android:minHeight="45sp"
+    android:gravity="center|center_vertical"
     />
 </LinearLayout>

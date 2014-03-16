@@ -44,13 +44,35 @@
         <item name="android:paddingLeft">5sp</item>
     </style>
     
+    <style name="postActionItem">
+        <item name="android:background">#ffffff</item>
+        <item name="android:textColor">#454545</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">2sp</item>
+        <item name="android:paddingRight">3sp</item>
+        <item name="android:paddingBottom">3sp</item>
+        <item name="android:paddingLeft">5sp</item>
+    </style>
+    
+    <style name="postShareItem">
+        <item name="android:background">#ffffff</item>
+        <item name="android:textColor">#1188D4</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">2sp</item>
+        <item name="android:paddingRight">3sp</item>
+        <item name="android:paddingBottom">3sp</item>
+        <item name="android:paddingLeft">5sp</item>
+    </style>
+    
     <style name="full_screen_dialog" parent="@android:style/Theme.Dialog">
-	    <item name="android:windowNoTitle">true</item>
-	    <item name="android:windowFullscreen">true</item>
-	    <item name="android:windowIsFloating">true</item>
-	    <item name="android:windowContentOverlay">@null</item>
-	    <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
-	    <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-	    <item name="android:windowBackground">@android:color/black</item>
-	</style>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
 </resources>

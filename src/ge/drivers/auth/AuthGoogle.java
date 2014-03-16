@@ -7,7 +7,6 @@ package ge.drivers.auth;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.Scopes;
 import ge.drivers.app.MainActivity;
 import ge.drivers.lib.MyAlert;
+import ge.drivers.lib.TopProgressBar;
 import ge.drivers.lib.ServerConn;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +39,7 @@ public class AuthGoogle {
     private String sessionId = null;
     private String email = null;
     Bundle savedInstanceState;
+    private boolean first_init = true;
 
     private AuthGoogle() {
 
@@ -58,10 +59,14 @@ public class AuthGoogle {
 
         this.activity = activity;
         this.savedInstanceState = savedInstanceState;
-        this.mAccountManager = AccountManager.get(activity);
-        Account[] accounts = mAccountManager.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        if (accounts.length > 0) {
-            account = accounts[0];
+        
+        if (first_init){
+            first_init = false;
+            this.mAccountManager = AccountManager.get(activity);
+            Account[] accounts = mAccountManager.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            if (accounts.length > 0) {
+                account = accounts[0];
+            }
         }
     }
 
@@ -104,7 +109,7 @@ public class AuthGoogle {
 
         private int start;
         private String error = null;
-        private ProgressDialog prog_dialog;
+        private TopProgressBar prog_dialog;
         
         public GoogleLoginer(){
         	

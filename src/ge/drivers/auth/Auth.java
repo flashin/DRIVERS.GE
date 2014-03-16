@@ -5,15 +5,13 @@
 package ge.drivers.auth;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import ge.drivers.app.MainActivity;
 import ge.drivers.lib.MyAlert;
-import ge.drivers.lib.MyResource;
+import ge.drivers.lib.TopProgressBar;
 
 import ge.drivers.lib.ServerConn;
 
@@ -26,11 +24,9 @@ import org.json.JSONObject;
 public class Auth {
 
     private static Auth instance = null;
-    private boolean was_checked = false;
     private Context context;
 
     private Auth() {
-        
     }
 
     public static Auth getInstance() {
@@ -43,22 +39,18 @@ public class Auth {
     }
 
     public void startAuth(Activity activity, Bundle savedInstanceState) {
-    	
-    	if (was_checked){
-    		return;
-    	}
-    	this.context = activity;
+
+        this.context = activity;
 
         AuthFB.getInstance().setFBSessionParams(activity, savedInstanceState);
         AuthGoogle.getInstance().setGoogleParams(activity, savedInstanceState);
-        was_checked = true;
     }
 
     public void resultAuth(int requestCode, int resultCode, Intent data) {
 
         AuthFB.getInstance().activityResultCallback(requestCode, resultCode, data);
-        
-        if (resultCode == 1021){
+
+        if (resultCode == 1021) {
             AuthGoogle.getInstance().googleClickCallback();
         }
     }
@@ -75,8 +67,8 @@ public class Auth {
 
     public void destroyAuth() {
 
-    	LogoutTask lt = new LogoutTask();
-    	lt.execute((Void) null);
+        LogoutTask lt = new LogoutTask();
+        lt.execute((Void) null);
     }
 
     public boolean isLogged() {
@@ -87,55 +79,54 @@ public class Auth {
 
         return false;
     }
-    
+
     public int getUserId() {
 
-        if (AuthGoogle.getInstance().getUserId() > 0){
+        if (AuthGoogle.getInstance().getUserId() > 0) {
             return AuthGoogle.getInstance().getUserId();
         }
-        
+
         return AuthFB.getInstance().getUserId();
     }
 
     public String getSessionId() {
 
-        if (AuthGoogle.getInstance().getSessionId() != null){
+        if (AuthGoogle.getInstance().getSessionId() != null) {
             return AuthGoogle.getInstance().getSessionId();
         }
-        
+
         return AuthFB.getInstance().getSessionId();
     }
 
     public String getEmail() {
-        
-        if (AuthGoogle.getInstance().getEmail() != null){
+
+        if (AuthGoogle.getInstance().getEmail() != null) {
             return AuthGoogle.getInstance().getEmail();
         }
 
         return AuthFB.getInstance().getEmail();
     }
-    
-    public boolean isBlocked(){
-    
+
+    public boolean isBlocked() {
+
         return AuthFB.getInstance().isBlocked();
     }
-    
+
     private class LogoutTask extends AsyncTask<Object, Void, String> {
 
         private String error = null;
-        ProgressDialog prog_dialog = null;
-        
-        public LogoutTask(){
-        
+        TopProgressBar prog_dialog = null;
+
+        public LogoutTask() {
+
             prog_dialog = MyAlert.getStandardProgress(context);
-            prog_dialog.show();
         }
 
         @Override
         protected String doInBackground(Object... urls) {
 
             try {
-            	JSONObject obj = ServerConn.getJson("logout");
+                JSONObject obj = ServerConn.getJson("logout");
 
                 AuthFB.getInstance().stopAppCallback();
                 AuthGoogle.getInstance().stopAppCallback();

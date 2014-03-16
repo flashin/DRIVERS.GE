@@ -5,9 +5,9 @@
 package ge.drivers.modules;
 
 import ge.drivers.lib.MyAlert;
+import ge.drivers.lib.TopProgressBar;
 import ge.drivers.lib.ServerConn;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -29,7 +28,7 @@ public class Posts extends ArrayAdapter<Post> {
 
     private ArrayList<Post> posts;
     private Context context;
-    private ProgressDialog progDailog;
+    private TopProgressBar progDailog;
     private Posts self;
     private boolean allowLoading = true;
     private Map<String, Object> params;

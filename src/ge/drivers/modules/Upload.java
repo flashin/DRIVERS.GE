@@ -26,6 +26,7 @@ import ge.drivers.app.UploadActivity;
 import ge.drivers.lib.DynamicSpinner;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
+import ge.drivers.lib.TopProgressBar;
 import ge.drivers.lib.ServerConn;
 
 import java.util.ArrayList;
@@ -35,11 +36,6 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.Scopes;
 
 /**
  *
@@ -153,7 +149,7 @@ public class Upload {
 
         private int start;
         private String error = null;
-        private ProgressDialog prog_dialog;
+        private TopProgressBar prog_dialog;
         
         public LoadFormTask(){
         	
@@ -276,7 +272,7 @@ public class Upload {
 
         private JSONObject res;
         private String error = null;
-        private ProgressDialog prog_dialog;
+        private TopProgressBar prog_dialog;
 
         public CreatePostTask() {
         	prog_dialog = MyAlert.getStandardProgress(context);

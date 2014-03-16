@@ -32,7 +32,7 @@ public class Image {
     public Image(JSONObject obj, String createDate) {
 
         this.image = obj;
-        this.folder = createDate.substring(6) + "/" + createDate.substring(3, 5) + "/";
+        this.folder = createDate.substring(6, 10) + "/" + createDate.substring(3, 5) + "/";
     }
 
     //Returns Image view with the image

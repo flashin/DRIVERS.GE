@@ -4,25 +4,24 @@
  */
 package ge.drivers.app;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
+
 import ge.drivers.auth.Auth;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.modules.Menu;
-import ge.drivers.modules.Upload;
+import ge.drivers.modules.Post;
 
 /**
  *
  * @author alexx
  */
-public class UploadActivity extends CommonActivity {
+public class PostActivity extends CommonActivity {
     
-    private Upload upload;
+    Post post;
 
     /**
      * Called when the activity is first created.
@@ -30,12 +29,12 @@ public class UploadActivity extends CommonActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        // ToDo add your GUI initialization code here     
-
+        // ToDo add your GUI initialization code here  
+        
         try {
             requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-            setContentView(R.layout.upload);
-            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar_2);
+            setContentView(R.layout.post_inner);
+            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar_3);
             
             //Authentification
             Auth.getInstance().startAuth(this, icicle);
@@ -43,25 +42,20 @@ public class UploadActivity extends CommonActivity {
             ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
             Menu menu = new Menu(mDrawerList, R.layout.menu_item);
             
-            ListView uploadList = (ListView) findViewById(R.id.upload_list);
-            upload = new Upload(uploadList, R.layout.upload_item);
+            Intent intent = getIntent();
+            int id = intent.getIntExtra("id", 0);
+            
+            post = new Post(id, this);
         } catch (Exception e) {
             MyAlert.alertWin(this, "" + e);
         }
     }
     
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        if (requestCode == 1022 && data != null){
-            String path = upload.getPath(data.getData());
-            upload.uploadFile(path);
-        }
-    }
+    /**
+     * Share pop up window
+     */
+    public void sharePost(View view){
     
-    public void createNewPost(View view){
-    
-        upload.createNewPost();
+        post.showShareWindow();
     }
 }

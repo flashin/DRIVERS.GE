@@ -45,4 +45,10 @@
     <string name="delete_result">მასალა წაშლილია</string>
     <string name="rate_post_error">შეცდომა</string>
     <string name="video_title_bar">ვიდეო</string>
+    <string name="inner_post_title">პოსტი ვრცლად</string>
+    <string name="action_user_posts">-ს განთავსებული პოსტები</string>
+    <string name="action_plate_posts">ნომერზე განთავსებული პოსტები</string>
+    <string name="action_car_posts">-ზე განთავსებული პოსტები</string>
+    <string name="action_city_posts">ყველა პოსტი ქალაქში</string>
+    <string name="share_title">გაზიარება</string>
 </resources>

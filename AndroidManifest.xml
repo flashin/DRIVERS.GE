@@ -19,6 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="PostActivity"
+                  android:label="@string/inner_post_title"
+                  android:configChanges="orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.POST" />
+            </intent-filter>
+        </activity>
         <activity android:name="UploadActivity"
                   android:label="@string/menu_upload"
                   android:configChanges="orientation">
@@ -29,7 +36,8 @@
         <activity android:name="VideoActivity"
                   android:label="@string/video_title_bar"
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-                  android:configChanges="orientation">
+                  android:configChanges="orientation"
+                  android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.UPLOAD" />
             </intent-filter>

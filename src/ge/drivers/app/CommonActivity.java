@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import ge.drivers.auth.Auth;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
@@ -20,9 +22,9 @@ import ge.drivers.modules.Menu;
  * @author alexx
  */
 public class CommonActivity extends Activity {
-    
+
     protected Menu menu = null;
-    
+
     /**
      * Called when the activity is first created.
      */
@@ -43,52 +45,70 @@ public class CommonActivity extends Activity {
         super.onSaveInstanceState(outState);
         Auth.getInstance().saveInstanceStateAuth(outState);
     }
-    
-    public void expandLeftMenu(View view){
-    
-        DrawerLayout drawer = (DrawerLayout)this.findViewById(MyResource.getResource(this, "drawer_layout"));
-        if (drawer != null){
-            drawer.openDrawer(Gravity.START);
+
+    public void expandLeftMenu(View view) {
+
+        try {
+            DrawerLayout drawer = (DrawerLayout) this.findViewById(MyResource.getResource(this, "drawer_layout"));
+            ListView menu = (ListView) this.findViewById(MyResource.getResource(this, "left_drawer"));
+
+            if (drawer != null) {
+                if (drawer.isDrawerOpen(menu)) {
+                    drawer.closeDrawer(Gravity.START);
+                } else {
+                    drawer.openDrawer(Gravity.START);
+                }
+            }
+        } catch (Exception e) {
+            MyAlert.alertWin(this, e.toString());
         }
     }
-    
-    public void expandRightMenu(View view){
-        
-        DrawerLayout drawer = (DrawerLayout)this.findViewById(MyResource.getResource(this, "drawer_layout"));
-        if (drawer != null){
-            drawer.openDrawer(Gravity.END);
+
+    public void expandRightMenu(View view) {
+
+        try {
+            DrawerLayout drawer = (DrawerLayout) this.findViewById(MyResource.getResource(this, "drawer_layout"));
+            LinearLayout menu = (LinearLayout) this.findViewById(MyResource.getResource(this, "right_drawer"));
+            if (drawer != null) {
+                if (drawer.isDrawerOpen(menu)) {
+                    drawer.closeDrawer(Gravity.END);
+                } else {
+                    drawer.openDrawer(Gravity.END);
+                }
+            }
+        } catch (Exception e) {
+            MyAlert.alertWin(this, e.toString());
         }
     }
-    
-    public void submitSearch(View view){
-    
-        if (menu != null){
+
+    public void submitSearch(View view) {
+
+        if (menu != null) {
             try {
-            String make = menu.getSearchParam("make_id");
-            String model = menu.getSearchParam("model_id");
-            String city = menu.getSearchParam("city_id");
-            String keyword = menu.getSearchParam("keyword");
-            String plate = menu.getSearchParam("plate");
-            
-            Intent intent = new Intent(this, MainActivity.class);
-            if (make != null && !make.equals("0")){
-                intent.putExtra("MAKE", make);
-            }
-            if (model != null && !model.equals("0")){
-                intent.putExtra("MODEL", model);
-            }
-            if (city != null && !city.equals("0")){
-                intent.putExtra("CITY", city);
-            }
-            if (keyword != null && keyword.length() > 2){
-                intent.putExtra("KEYWORD", keyword);
-            }
-            if (plate != null && plate.length() > 2){
-                intent.putExtra("PLATE", plate);
-            }
-            this.startActivity(intent);
-            }
-            catch (Exception e){
+                String make = menu.getSearchParam("make_id");
+                String model = menu.getSearchParam("model_id");
+                String city = menu.getSearchParam("city_id");
+                String keyword = menu.getSearchParam("keyword");
+                String plate = menu.getSearchParam("plate");
+
+                Intent intent = new Intent(this, MainActivity.class);
+                if (make != null && !make.equals("0")) {
+                    intent.putExtra("MAKE", make);
+                }
+                if (model != null && !model.equals("0")) {
+                    intent.putExtra("MODEL", model);
+                }
+                if (city != null && !city.equals("0")) {
+                    intent.putExtra("CITY", city);
+                }
+                if (keyword != null && keyword.length() > 2) {
+                    intent.putExtra("KEYWORD", keyword);
+                }
+                if (plate != null && plate.length() > 2) {
+                    intent.putExtra("PLATE", plate);
+                }
+                this.startActivity(intent);
+            } catch (Exception e) {
                 MyAlert.alertWin(this, "" + e);
             }
         }
