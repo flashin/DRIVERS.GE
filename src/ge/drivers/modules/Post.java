@@ -21,10 +21,7 @@ import android.widget.*;
 import ge.drivers.app.MainActivity;
 import ge.drivers.app.PostActivity;
 import ge.drivers.app.R;
-import ge.drivers.app.UploadActivity;
 import ge.drivers.auth.Auth;
-import ge.drivers.auth.AuthFB;
-import ge.drivers.auth.AuthGoogle;
 import ge.drivers.lib.MyAlert;
 import ge.drivers.lib.MyResource;
 import ge.drivers.lib.TopProgressBar;
@@ -716,58 +713,15 @@ public class Post {
 
     public void showShareWindow() {
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle(context.getString(MyResource.getString(context, "share_title")));
+        Intent share = new Intent(android.content.Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 
-        ListView lv = new ListView(context);
-        final String[] items = new String[]{"Facebook", "Twitter", "Email", "SMS"};
-        final int list_res = MyResource.getLayout(context, "post_share_item");
+        // Add data to the intent, the receiving app will decide
+        // what to do with it.
+        share.putExtra(Intent.EXTRA_SUBJECT, "DRIVERS.GE :: " + textData.get("open_comment"));
+        share.putExtra(Intent.EXTRA_TEXT, ServerConn.url + "Post/view/" + post_id);
 
-        lv.setAdapter(new ArrayAdapter<String>(context, list_res, items) {
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-
-                LayoutInflater loInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View rowView = loInflater.inflate(list_res, parent, false);
-
-                TextView textView = (TextView) rowView.findViewById(R.id.post_share_item);
-                textView.setText(items[position]);
-
-                return rowView;
-            }
-        });
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (position == 0) {
-                    //Facebook share
-                    Intent share = new Intent(android.content.Intent.ACTION_SEND);
-                    share.setType("text/plain");
-                    share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-
-                    // Add data to the intent, the receiving app will decide
-                    // what to do with it.
-                    share.putExtra(Intent.EXTRA_SUBJECT, "DRIVERS.GE :: " + textData.get("open_comment"));
-                    share.putExtra(Intent.EXTRA_TEXT, ServerConn.url + "Post/view/" + post_id);
-
-                    ((Activity)context).startActivity(Intent.createChooser(share, "Share..."));
-                }
-            }
-        });
-
-        alertDialogBuilder.setView(lv);
-        alertDialogBuilder.setNegativeButton(
-                "Cancel", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        ((Activity) context).startActivity(Intent.createChooser(share, context.getString(MyResource.getString(context, "share_title"))));
     }
 }

@@ -7,7 +7,6 @@ package ge.drivers.lib;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.widget.ProgressBar;
 
 /**
  *
@@ -19,7 +18,7 @@ public class MyAlert {
      * Static method to alert message in alert dialog
      */
     public static void alertWin(Context context, String str){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        /*AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Error Alert");
         alertDialogBuilder.setMessage(str);
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){  
@@ -29,7 +28,7 @@ public class MyAlert {
                 });
         
         AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        alertDialog.show();*/
     }
     
     public static void alertSuccessWin(Context context, String title, String str){

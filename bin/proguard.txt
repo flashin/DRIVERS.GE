@@ -1,0 +1,40 @@
+# view res/layout/main.xml #generated:2
+# view res/layout/post_inner.xml #generated:2
+# view res/layout/upload.xml #generated:2
+-keep class android.support.v4.widget.DrawerLayout { <init>(...); }
+
+# view AndroidManifest.xml #generated:44
+-keep class com.facebook.LoginActivity { <init>(...); }
+
+# view res/layout/com_facebook_usersettingsfragment.xml #generated:48
+-keep class com.facebook.widget.LoginButton { <init>(...); }
+
+# view AndroidManifest.xml #generated:13
+-keep class ge.drivers.app.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:21
+-keep class ge.drivers.app.PostActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:28
+-keep class ge.drivers.app.UploadActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:35
+-keep class ge.drivers.app.VideoActivity { <init>(...); }
+
+# onClick res/layout/upload.xml #generated:71
+-keepclassmembers class * { *** createNewPost(...); }
+
+# onClick res/layout/title_bar.xml #generated:21
+# onClick res/layout/title_bar_2.xml #generated:21
+# onClick res/layout/title_bar_3.xml #generated:21
+-keepclassmembers class * { *** expandLeftMenu(...); }
+
+# onClick res/layout/title_bar.xml #generated:42
+-keepclassmembers class * { *** expandRightMenu(...); }
+
+# onClick res/layout/title_bar_3.xml #generated:42
+-keepclassmembers class * { *** sharePost(...); }
+
+# onClick res/layout/search.xml #generated:33
+-keepclassmembers class * { *** submitSearch(...); }
+

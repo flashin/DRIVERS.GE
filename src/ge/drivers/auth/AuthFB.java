@@ -200,6 +200,7 @@ public class AuthFB {
                                     userId = driversRes.getInt("userId");
                                     sessionId = driversRes.getString("sessionId");
                                     email = driversRes.getString("email");
+                                    activity.startActivity(new Intent(activity, MainActivity.class));
                                 } else {
                                     //Clear all session info & ask user to login again
                                     Session session = Session.getActiveSession();

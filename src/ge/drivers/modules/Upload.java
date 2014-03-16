@@ -144,24 +144,24 @@ public class Upload {
             throw new RuntimeException(e);
         }
     }
-    
+
     private class LoadFormTask extends AsyncTask<Object, Void, JSONObject> {
 
         private int start;
         private String error = null;
         private TopProgressBar prog_dialog;
-        
-        public LoadFormTask(){
-        	
-        	prog_dialog = MyAlert.getStandardProgress(context);
+
+        public LoadFormTask() {
+
+            prog_dialog = MyAlert.getStandardProgress(context);
         }
 
         @Override
         protected JSONObject doInBackground(Object... urls) {
 
             try {
-            	JSONObject data = ServerConn.getJson("uploadtemp");
-            	return data;
+                JSONObject data = ServerConn.getJson("uploadtemp");
+                return data;
             } catch (Exception e) {
                 error = e.toString();
             }
@@ -170,8 +170,8 @@ public class Upload {
 
         @Override
         protected void onPostExecute(JSONObject result) {
-        	
-        	prog_dialog.dismiss();
+
+            prog_dialog.dismiss();
 
             if (error != null) {
                 MyAlert.alertWin(context, error);
@@ -196,7 +196,7 @@ public class Upload {
                 uploadList.setAdapter(new UploadAdapter(layoutRes));
             } catch (Exception e) {
                 MyAlert.alertWin(context, "" + e);
-            }            
+            }
         }
     }
 
@@ -267,7 +267,7 @@ public class Upload {
             }
         }
     }
-    
+
     private class CreatePostTask extends AsyncTask<Object, Integer, JSONObject> {
 
         private JSONObject res;
@@ -275,36 +275,35 @@ public class Upload {
         private TopProgressBar prog_dialog;
 
         public CreatePostTask() {
-        	prog_dialog = MyAlert.getStandardProgress(context);
+            prog_dialog = MyAlert.getStandardProgress(context);
         }
 
         @Override
         protected JSONObject doInBackground(Object... urls) {
 
-        	try {
-	        	Map<String, Object> hm = new HashMap<String, Object>();
-	
-	            hm.put("plate_number", getSearchParam("plate_number"));
-	            hm.put("make_id", getSearchParam("make_id"));
-	            hm.put("model_id", getSearchParam("model_id"));
-	            hm.put("city_id", getSearchParam("city_id"));
-	            hm.put("open_comment", getSearchParam("open_comment"));
-	            hm.put("is_anonymous", getSearchParam("is_anonymous"));
-	
-	            String module = "createpost";
-	            
-	            return ServerConn.postJson(module, hm);
-        	}
-        	catch (Exception e){
-        		error = e.toString();
-        		return null;
-        	}
+            try {
+                Map<String, Object> hm = new HashMap<String, Object>();
+
+                hm.put("plate_number", getSearchParam("plate_number"));
+                hm.put("make_id", getSearchParam("make_id"));
+                hm.put("model_id", getSearchParam("model_id"));
+                hm.put("city_id", getSearchParam("city_id"));
+                hm.put("open_comment", getSearchParam("open_comment"));
+                hm.put("is_anonymous", getSearchParam("is_anonymous"));
+
+                String module = "createpost";
+
+                return ServerConn.postJson(module, hm);
+            } catch (Exception e) {
+                error = e.toString();
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(JSONObject result) {
 
-        	prog_dialog.dismiss();
+            prog_dialog.dismiss();
 
             //Error handling
             if (error != null) {
@@ -313,38 +312,39 @@ public class Upload {
             }
 
             try {
-	            String win_title = context.getString(MyResource.getString(context, "upload_post_title"));
-	            String win_completed = context.getString(MyResource.getString(context, "upload_completed"));
-	            String win_incomplete = context.getString(MyResource.getString(context, "upload_incomplete"));
-	            
-	            if (result.getString("success").equals("true")) {
-	            	String dialog_mess = null;
-	                if (result.has("completed") && result.getString("completed").equals("0")) {
-	                	dialog_mess = win_incomplete;
-	                } else {
-	                	dialog_mess = win_completed;
-	                }	                
-	                
-	                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-	                alertDialogBuilder.setTitle(win_title);
-	                alertDialogBuilder.setMessage(dialog_mess);
-	                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){  
-	                            public void onClick(DialogInterface dialog, int id) {  
-	                                dialog.dismiss();
-	                                context.startActivity(new Intent(context, UploadActivity.class));
-	                            }  
-	                        });
-	                
-	                AlertDialog alertDialog = alertDialogBuilder.create();
-	                alertDialog.show();
-	            } else {
-	                String error = "Unknown Error. Try Again Later";
-	                if (result.has("error")) {
-	                    error = result.getString("error");
-	                }
-	                MyAlert.alertSuccessWin(context, win_title, error);
-	            }
-	            
+                String win_title = context.getString(MyResource.getString(context, "upload_post_title"));
+                String win_completed = context.getString(MyResource.getString(context, "upload_completed"));
+                String win_incomplete = context.getString(MyResource.getString(context, "upload_incomplete"));
+
+                if (result.getString("success").equals("true")) {
+                    String dialog_mess = null;
+                    if (result.has("completed") && result.getString("completed").equals("0")) {
+                        dialog_mess = win_incomplete;
+                    } else {
+                        dialog_mess = win_completed;
+                    }
+
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder.setTitle(win_title);
+                    alertDialogBuilder.setMessage(dialog_mess);
+                    alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                            context.startActivity(new Intent(context, UploadActivity.class));
+                        }
+                    });
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                } else {
+                    String error = "Unknown Error. Try Again Later";
+                    if (result.has("error")) {
+                        error = result.getString("error");
+                    }
+                    MyAlert.alertSuccessWin(context, win_title, error);
+                }
+
             } catch (Exception e) {
                 MyAlert.alertWin(context, "" + e);
             }
@@ -407,8 +407,8 @@ public class Upload {
 
     public void createNewPost() {
 
-    	CreatePostTask cpt = new CreatePostTask();
-    	cpt.execute((Void) null);
+        CreatePostTask cpt = new CreatePostTask();
+        cpt.execute((Void) null);
     }
 
     public String getSearchParam(String param) {
@@ -440,6 +440,13 @@ public class Upload {
         ((Activity) context).startManagingCursor(cursor);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        return cursor.getString(column_index);
+
+        String path = cursor.getString(column_index);
+        if (path == null) {
+            column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+            cursor.moveToFirst();
+            path = cursor.getString(column_index);
+        }
+        return path;
     }
 }

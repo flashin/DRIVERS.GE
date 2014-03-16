@@ -112,14 +112,13 @@ public class DynamicSpinner {
         //Clear adapter before store
         if (!adapter.isEmpty()){
             adapter.clear();
-        }
-        
-        //Select first element
-        sp.setSelection(0);
+        }   
         
         //if data array is empty
         if (arr == null){
             adapter.add(label);
+            //Select first element
+            sp.setSelection(0);
             ids = new String[1];
             ids[0] = null;
             return;
@@ -130,6 +129,8 @@ public class DynamicSpinner {
             ids = new String[size + 1];
             ids[0] = null;
             adapter.add(label);
+            //Select first element
+            sp.setSelection(0);
             JSONObject obj;
             for (int i = 1; i < size + 1; i++) {
                 obj = arr.getJSONObject(i - 1);
@@ -169,9 +170,12 @@ public class DynamicSpinner {
         
         int position = sp.getSelectedItemPosition();
         int subpos = subsp.getSpinner().getSelectedItemPosition();
+        if (subpos <= 0){
+            return null;
+        }
         
         try {
-            String value = subarr[position].getJSONObject(subpos).getString("id");
+            String value = subarr[position].getJSONObject(subpos - 1).getString("id");
             return value;
         }
         catch (Exception e){
